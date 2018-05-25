@@ -4,9 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Kait"
+        xmlns:UI="clr-namespace:View.UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Kait Electricals" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="300*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" ></RowDefinition>
+            <RowDefinition Height="300*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <UI:NavigationButton  Height="60" Grid.Column="0" Grid.Row="0" Background="#3f51b5" BorderThickness="0,0,0,0" VerticalAlignment="Top" ContentVisible="Hidden"  />
+
+        <DockPanel  Width="60"  Grid.Column="0" Grid.Row="1" Background="#273238"  x:Name="dockLeft" >
+
+         </DockPanel>
+
+
+        <Frame x:Name="pageBox" Grid.Column="1" Grid.Row="0"  Background="#f5f5f5"  NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" Grid.RowSpan="2">
+            
+        </Frame>
     </Grid>
+
 </Window>

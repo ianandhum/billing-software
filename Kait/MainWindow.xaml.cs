@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,6 +26,79 @@ namespace Kait
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new Data();
+            
+           
+                
         }
+        private  class Data:INotifyPropertyChanged
+        {
+            public Data()
+            {
+                Item = new List<string>();
+                Item.Add("Hell");
+                Item.Add("show ");
+                Item.Add("colleage");
+                Item.Add("clash");
+                Item.Add("clan");
+                Item.Add("clogue");
+                ItemText = "Hell";
+                slIndex = 0;
+                slItem = Item.ElementAt(0);
+            }
+
+            private string _ItemText;
+            public string ItemText {
+                get { return _ItemText; }
+                set
+                {
+                    _ItemText = value;
+                    NotifyChange();
+                }
+            }
+            private List<String> _Items;
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            public void NotifyChange([CallerMemberName] string property="")
+            {
+                if (PropertyChanged != null)
+                {
+                    this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+                }
+            }
+
+            public List<String> Item
+            {
+                get { return _Items; }
+                set
+                {
+                    this._Items = value;
+                    NotifyChange();
+                }
+            }
+            private String _slItem;
+            public String slItem
+            {
+                get { return _slItem; }
+                set
+                {
+                    this._slItem = value;
+                    NotifyChange();
+                }
+            }
+            private int _slIndex;
+            public int slIndex
+            {
+                get { return _slIndex; }
+                set
+                {
+                    this._slIndex = value;
+                    NotifyChange();
+                }
+            }
+
+        }
+
     }
+
 }

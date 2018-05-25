@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="View.UI.NavigationButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.UI"  
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="100">
+    <UserControl.Resources>
+        
+        <ControlTemplate TargetType="Button" x:Key="newBtn" >
+            <Grid>
+                <Rectangle x:Name="btnRect"  MinHeight="60">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="Transparent"></SolidColorBrush>
+                    </Rectangle.Fill>
+                    <Rectangle.Stroke >
+                        <SolidColorBrush Color="Transparent"></SolidColorBrush>
+                    </Rectangle.Stroke>
+                </Rectangle>
+                <ContentPresenter Content="{TemplateBinding Content}"></ContentPresenter>
+
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="btnRect" Property="Fill">
+                        <Setter.Value>
+                            <SolidColorBrush Color="#272036"></SolidColorBrush>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+    </UserControl.Resources>
+    <StackPanel>
+        <Button Click="ButtonImage_Click"   Template="{StaticResource newBtn}" BorderThickness="0,0,0,0"  BorderBrush="{x:Null}" Cursor="Hand"  >
+            <Image x:Name="imgBtnMain" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Center"  />
+            <Button.Triggers>
+                <EventTrigger RoutedEvent = "Button.MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard >
+                            <Storyboard >
+
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty = 
+                           "Height" Duration = "0:0:0.1" Storyboard.TargetName="imgBtnMain" >
+                                    <LinearDoubleKeyFrame Value = "27" KeyTime = "0:0:0.1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty = 
+                           "Width" Duration = "0:0:0.1"  Storyboard.TargetName="imgBtnMain" >
+                                    <LinearDoubleKeyFrame Value = "27" KeyTime = "0:0:0.1"/>
+                                </DoubleAnimationUsingKeyFrames>
+
+
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+                <EventTrigger RoutedEvent = "Button.MouseLeave">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard >
+                            <Storyboard >
+
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty = 
+                           "Height" Duration = "0:0:0.1" Storyboard.TargetName="imgBtnMain" >
+                                    <LinearDoubleKeyFrame Value = "20" KeyTime = "0:0:0.1"/>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty = 
+                           "Width" Duration = "0:0:0.1"  Storyboard.TargetName="imgBtnMain" >
+                                    <LinearDoubleKeyFrame Value = "20" KeyTime = "0:0:0.1"/>
+                                </DoubleAnimationUsingKeyFrames>
+
+
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Button.Triggers>
+        </Button>
+        <Label  x:Name="contentLabel" HorizontalContentAlignment="Center" Foreground="#fff" FontSize="9" FontFamily="sans-serif"></Label>
+    </StackPanel>
+
+</UserControl>

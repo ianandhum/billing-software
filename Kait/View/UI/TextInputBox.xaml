@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="View.UI.TextInputBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:View.UI"
+             mc:Ignorable="d" 
+             x:Name="TextInputUC"
+             d:DesignHeight="100" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style x:Key="TextBoxTemplate" TargetType="TextBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="IBeam"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource ResourceKey=BorderBrush}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="SelectionBrush">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource ResourceKey=SelectionBrush}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource ResourceKey=InputControlBackground}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource InputBoxForeground}"></SolidColorBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style x:Key="TextBoxLabel" TargetType="Label">
+            <Setter Property="Padding" Value="1,5"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontFamily" Value="sans-serif"/>
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource ResourceKey=InputBoxLabelForeground}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Orientation="Vertical">
+        <Label Content="{Binding LabelContent,ElementName=TextInputUC}" x:Name="labelContent" Style="{StaticResource ResourceKey=TextBoxLabel}" ></Label>
+        <TextBox Text="{Binding Text,ElementName=TextInputUC,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="textBoxContent" Style="{StaticResource ResourceKey=TextBoxTemplate}" />    
+    </StackPanel>
+</UserControl>
