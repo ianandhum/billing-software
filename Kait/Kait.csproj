@@ -55,8 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="View\Page\Home.xaml.cs">
+    <Compile Include="View\Pages\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\NewInvoice.xaml.cs">
+      <DependentUpon>NewInvoice.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UI\ComboBox.xaml.cs" />
     <Compile Include="View\UI\NavigationButton.xaml.cs" />
@@ -74,7 +77,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\Page\Home.xaml">
+    <Page Include="View\Pages\Home.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\NewInvoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

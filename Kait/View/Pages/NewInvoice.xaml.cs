@@ -13,16 +13,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Kait.View.Page
+namespace Kait.View.Pages
 {
     /// <summary>
-    /// Interaction logic for Home.xaml
+    /// Interaction logic for NewInvoice.xaml
     /// </summary>
-    public partial class Home : Page
+    public partial class NewInvoice : Page
     {
-        public Home()
+        public NewInvoice()
         {
             InitializeComponent();
         }
+
+       
     }
 }

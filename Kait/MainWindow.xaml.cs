@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Kait.View.Pages;
 
 namespace Kait
 {
@@ -27,10 +28,12 @@ namespace Kait
         {
             InitializeComponent();
             DataContext = new Data();
-            
+            PART_FrameService = PART_Frame.NavigationService;
+            PART_FrameService.Navigate(new Home());
            
                 
         }
+        public static NavigationService PART_FrameService { get; set; }
         private  class Data:INotifyPropertyChanged
         {
             public Data()
@@ -99,6 +102,10 @@ namespace Kait
 
         }
 
+        private void NavigationButton_Click(object sender, EventArgs e)
+        {
+            PART_FrameService.Navigate(new NewInvoice());
+        }
     }
 
 }
