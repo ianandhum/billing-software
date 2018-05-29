@@ -26,6 +26,7 @@ namespace View.UI
             InitializeComponent();
             Text = "";
             LabelContent = "TextBox Heading";
+            TextInputScope = "String";
         }
         public string Text
         {
@@ -49,7 +50,18 @@ namespace View.UI
                         "LabelContent", typeof(string),
                         typeof(TextInputBox)
          );
-        
+
+        public string TextInputScope
+        {
+            get { return (string)GetValue(TextInputScopeProperty); }
+            set { SetValue(TextInputScopeProperty, value); }
+        }
+        public static readonly DependencyProperty TextInputScopeProperty =
+                        DependencyProperty.Register(
+                        "TextInputScope", typeof(string),
+                        typeof(TextInputBox)
+         );
+
 
 
 

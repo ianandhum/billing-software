@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Kait.ViewModel;
+using MahApps.Metro.Controls;
 
 namespace Kait.View.Pages
 {
@@ -23,6 +25,16 @@ namespace Kait.View.Pages
         public NewInvoice()
         {
             InitializeComponent();
+            dateSlip.Content = DateTime.Now.ToLongDateString();
+        }
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainWindow.PART_FrameService.CanGoBack)
+            {
+                MainWindow.PART_FrameService.GoBack();
+            }
+
+            
         }
 
        

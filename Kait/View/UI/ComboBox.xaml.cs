@@ -62,6 +62,38 @@ namespace View.UI
                         "SelectedIndex", typeof(int),
                         typeof(ComboBox)
          );
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+        public static readonly DependencyProperty TextProperty =
+                        DependencyProperty.Register(
+                        "Text", typeof(string),
+                        typeof(ComboBox)
+         );
+
+        public bool IsEditable
+        {
+            get { return (bool)GetValue(IsEditableProperty); }
+            set { SetValue(IsEditableProperty, value); }
+        }
+        public static readonly DependencyProperty IsEditableProperty =
+                        DependencyProperty.Register(
+                        "IsEditable", typeof(bool),
+                        typeof(ComboBox)
+         );
+
+        public string DisplayMemberPath
+        {
+            get { return (string)GetValue(DisplayMemberPathProperty); }
+            set { SetValue(DisplayMemberPathProperty, value); }
+        }
+        public static readonly DependencyProperty DisplayMemberPathProperty =
+                        DependencyProperty.Register(
+                        "DisplayMemberPath", typeof(string),
+                        typeof(ComboBox)
+         );
 
 
         public object SelectedItem

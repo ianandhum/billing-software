@@ -24,5 +24,10 @@ namespace Kait.View.Pages
         {
             InitializeComponent();
         }
+
+        private void HomeButton_Handler(object sender, EventArgs e)
+        {
+            MainWindow.PART_FrameService.Navigate(new NewInvoice());
+        }
     }
 }

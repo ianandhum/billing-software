@@ -26,7 +26,7 @@
     </UserControl.Resources>
    <StackPanel Orientation="Vertical">
         <Label  x:Name="labelContent" Content="{Binding LabelContent,ElementName=ComboBoxUC}"  Style="{StaticResource ResourceKey=TextBoxLabel}" ></Label>
-        <ComboBox  FontFamily="sans-serif" VerticalContentAlignment="Center" FontSize="14"  x:Name="ComboBoxElement"  Style="{StaticResource ComboBox}" ItemsSource="{Binding ItemSource ,ElementName=ComboBoxUC}" SelectedItem="{Binding SelectedItem,ElementName=ComboBoxUC,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding SelectedIndex,ElementName=ComboBoxUC,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+        <ComboBox  FontFamily="sans-serif" VerticalContentAlignment="Center" FontSize="14"  x:Name="ComboBoxElement"  Style="{StaticResource ComboBox}" IsEditable="{Binding Path=IsEditable,ElementName=ComboBoxUC}" Text="{Binding Path=Text,ElementName=ComboBoxUC,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ItemSource ,ElementName=ComboBoxUC}" DisplayMemberPath="{Binding Path=DisplayMemberPath,ElementName=ComboBoxUC}" SelectedItem="{Binding SelectedItem,ElementName=ComboBoxUC,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectedIndex="{Binding SelectedIndex,ElementName=ComboBoxUC,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
 
         </ComboBox>
 

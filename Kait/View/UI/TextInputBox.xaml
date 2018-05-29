@@ -54,6 +54,6 @@
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">
         <Label Content="{Binding LabelContent,ElementName=TextInputUC}" x:Name="labelContent" Style="{StaticResource ResourceKey=TextBoxLabel}" ></Label>
-        <TextBox Text="{Binding Text,ElementName=TextInputUC,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="textBoxContent" Style="{StaticResource ResourceKey=TextBoxTemplate}" />    
+        <TextBox InputMethod.InputScope="{Binding TextInputScope,ElementName=TextInputUC,Mode=OneTime}" Text="{Binding Text,ElementName=TextInputUC,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" x:Name="textBoxContent" Style="{StaticResource ResourceKey=TextBoxTemplate}" />    
     </StackPanel>
 </UserControl>

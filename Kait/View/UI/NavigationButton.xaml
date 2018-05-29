@@ -34,7 +34,7 @@
 
     </UserControl.Resources>
     <StackPanel>
-        <Button Click="ButtonImage_Click"   Template="{StaticResource newBtn}" BorderThickness="0,0,0,0"  BorderBrush="{x:Null}" Cursor="Hand"  >
+        <Button Click="ButtonImage_Click" MinHeight="60"  Template="{StaticResource newBtn}" BorderThickness="0,0,0,0"  BorderBrush="{x:Null}" Cursor="Hand"  >
             <Image x:Name="imgBtnMain" Height="20" Width="20" VerticalAlignment="Center" HorizontalAlignment="Center"  />
             <Button.Triggers>
                 <EventTrigger RoutedEvent = "Button.MouseEnter">
