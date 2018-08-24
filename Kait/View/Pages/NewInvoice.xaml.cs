@@ -26,7 +26,29 @@ namespace Kait.View.Pages
         {
             InitializeComponent();
             dateSlip.Content = DateTime.Now.ToLongDateString();
+            DataContext = new NewInvoiceViewModel();
         }
+
+        //
+        //Control members
+        //
+
+        private void NavigateToTab(TabType tabType)
+        {
+            InvoiceNavTab.SelectedIndex = (int)tabType;
+        }
+        private enum TabType
+        {
+            ProductDetails,//0
+            ClientDetails,//1
+            PrintView//2
+        }
+
+        //
+        //Interface(UI) members
+        //
+
+        //Backbutton at the top
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             if (MainWindow.PART_FrameService.CanGoBack)
@@ -37,6 +59,15 @@ namespace Kait.View.Pages
             
         }
 
-       
+        //Next button at product view
+        private void NextBtnProductsTab_Click(object sender, RoutedEventArgs e)
+        {
+            NavigateToTab(TabType.ClientDetails);
+        }
+
+        private void DGridInvoiceProducts_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            Console.WriteLine(e.Row.Item.GetType());
+        }
     }
 }

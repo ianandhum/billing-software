@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27703.2018
+VisualStudioVersion = 15.0.27703.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kait", "Kait\Kait.csproj", "{46590099-BBA9-4C05-A55D-B0F4CBA8A38E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Data", "..\Provider.Data\Provider.Data\Provider.Data.csproj", "{07B46CA5-1C44-4019-A416-13591E08CE31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "..\..\..\source\repos\ConsoleApp1\ConsoleApp1\ConsoleApp1.csproj", "{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,11 +19,19 @@ Global
 		{46590099-BBA9-4C05-A55D-B0F4CBA8A38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46590099-BBA9-4C05-A55D-B0F4CBA8A38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46590099-BBA9-4C05-A55D-B0F4CBA8A38E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B46CA5-1C44-4019-A416-13591E08CE31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B46CA5-1C44-4019-A416-13591E08CE31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B46CA5-1C44-4019-A416-13591E08CE31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B46CA5-1C44-4019-A416-13591E08CE31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {0E26248E-F17B-4472-A84A-C75792DAA597}
+		SolutionGuid = {A94ABEAB-C01C-40D5-82BE-803DCB59716C}
 	EndGlobalSection
 EndGlobal

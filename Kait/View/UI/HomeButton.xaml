@@ -4,19 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:local="clr-namespace:View.UI"
              mc:Ignorable="d" 
              x:Name="HomeButtonUC"
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel   Margin="10">
 
-        <Button  Grid.Column="2" Grid.Row="1" Background="Transparent"  Height="180" Width="180"  BorderThickness="0,0,0,0" HorizontalContentAlignment="Center" Click="Button_Click">
+        <Controls:Tile  Grid.Column="2" Grid.Row="1" Cursor="Hand" Background="Transparent"  Height="180" Width="180"   HorizontalContentAlignment="Center" Click="Button_Click">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" >
-                <Image  Height="60" Width="60" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="Img" />
-                <Label Content="{Binding Path=Heading,ElementName=HomeButtonUC}" HorizontalContentAlignment="Center" Margin="0,0,0,0"  FontSize="18" Foreground="#000"  FontWeight="Normal"/>
+                <Image  Height="100" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="Img" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality"/>
+                <Label Content="{Binding Path=Heading,ElementName=HomeButtonUC}" HorizontalContentAlignment="Center" Margin="0,0,0,0"  FontSize="20" Foreground="#000"  FontWeight="Normal"/>
                 <Label Content="{Binding Path=SubHeading,ElementName=HomeButtonUC}" HorizontalContentAlignment="Center" FontSize="12"  FontWeight="Light"/>
             </StackPanel>
 
-        </Button>
+        </Controls:Tile>
     </StackPanel>
 </UserControl>

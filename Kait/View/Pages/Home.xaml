@@ -31,12 +31,12 @@
         <StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
             <Label Content="Kait Electricals" FontWeight="Light" FontFamily="Sans-serif" FontSize="40" Margin="30"></Label>
         </StackPanel>
-        <UI:HomeButton Grid.Column="0" Grid.Row="1" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/004-printer.png" Handler="HomeButton_Handler"></UI:HomeButton>
-        <UI:HomeButton Grid.Column="1" Grid.Row="1" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/004-printer.png"></UI:HomeButton>
-        <UI:HomeButton  Grid.Column="2" Grid.Row="1" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/004-printer.png"></UI:HomeButton>
-        <UI:HomeButton Grid.Column="0" Grid.Row="2" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/004-printer.png"></UI:HomeButton>
-        <UI:HomeButton Grid.Column="1" Grid.Row="2" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/004-printer.png"></UI:HomeButton>
-        <UI:HomeButton  Grid.Column="2" Grid.Row="2" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/004-printer.png"></UI:HomeButton>
+        <UI:HomeButton Grid.Column="0" Grid.Row="1" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/new-invoice.png" Handler="HomeButton_Handler"></UI:HomeButton>
+        <UI:HomeButton Grid.Column="1" Grid.Row="1" Heading="Add Purchase" SubHeading="Purchase Stock from vendor" Source="/Kait;component/View/Assets/new-purchase.png"></UI:HomeButton>
+        <UI:HomeButton  Grid.Column="2" Grid.Row="1" Heading="New Receipt" SubHeading="Add new estimate receipt" Source="/Kait;component/View/Assets/receipt.png"></UI:HomeButton>
+        <UI:HomeButton Grid.Column="0" Grid.Row="2" Heading="Accounts" SubHeading="Manage client/vendors" Source="/Kait;component/View/Assets/accounts.png"></UI:HomeButton>
+        <UI:HomeButton Grid.Column="1" Grid.Row="2" Heading="Products" SubHeading="Manage Products/items" Source="/Kait;component/View/Assets/product.png"></UI:HomeButton>
+        <UI:HomeButton  Grid.Column="2" Grid.Row="2" Heading="GST Returns" SubHeading="Generate reports" Source="/Kait;component/View/Assets/returns-gst.png"></UI:HomeButton>
 
     </Grid>
        

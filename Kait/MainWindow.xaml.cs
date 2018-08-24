@@ -14,9 +14,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Interactivity;
 using System.Windows.Shapes;
 using Kait.View.Pages;
 using MahApps.Metro.Controls;
+using System.Windows.Media.Animation;
 
 namespace Kait
 {
@@ -43,6 +45,24 @@ namespace Kait
                 PART_FrameService.Navigate(new Home());
             }
             
+        }
+        /* 
+         *  The following part of code is from stackoverflow.com
+         *  Thanks to serge_gubenko and Wong Jia Hau
+         *  //
+         *  Modified to suit our needs 
+         *  //  Animation now gives fade in and out effect(was slide in and out originally)
+         *  
+         */
+        private void PART_Frame_Navigating(object sender, NavigatingCancelEventArgs e)
+        {
+            var @double = new DoubleAnimation();
+            @double.Duration = TimeSpan.FromSeconds(0.8);
+            @double.DecelerationRatio = 0.5;
+            @double.To = 1.0;
+            
+            @double.From = 0.0;
+            (e.Content as Page).BeginAnimation(OpacityProperty, @double);
         }
     }
 

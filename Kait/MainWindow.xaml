@@ -8,8 +8,8 @@
         xmlns:local="clr-namespace:Kait"
         xmlns:UI="clr-namespace:View.UI"
         mc:Ignorable="d"
-        Title="Kait Electricals" MinHeight="700" MinWidth="1000" WindowState="Maximized">
-    <Grid>
+        Title="Kait Electricals" MinHeight="700" MinWidth="1200" WindowState="Maximized">
+    <Grid UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="300*"></ColumnDefinition>
@@ -21,14 +21,14 @@
         <UI:NavigationButton  Height="60" Grid.Column="0" Grid.Row="0" IconImage="/Kait;component/View/Assets/home.png" Background="#3f51b5" BorderThickness="0,0,0,0" VerticalAlignment="Top" ContentVisible="Hidden" Click="NavigationButton_Click" />
 
         <DockPanel  Width="60"  Grid.Column="0" Grid.Row="1" Background="#273238"  x:Name="dockLeft" >
-            <UI:NavigationButton IconImage="/Kait;component/View/Assets/settings.png"  Height="80" DockPanel.Dock="Top" BottomText="Reports"  />
-            <UI:NavigationButton IconImage="/Kait;component/View/Assets/settings.png"  Height="80"  DockPanel.Dock="Top" BottomText="Stats"  />
-            <UI:NavigationButton IconImage="/Kait;component/View/Assets/settings.png"  Height="80"  DockPanel.Dock="Top" BottomText="Lock"  />
-            <UI:NavigationButton IconImage="/Kait;component/View/Assets/settings.png"  Height="80" VerticalAlignment="Bottom"  DockPanel.Dock="Bottom" BottomText="Exit"  />
+            <UI:NavigationButton IconImage="/Kait;component/View/Assets/reports.png"  Height="80" DockPanel.Dock="Top" BottomText="Reports"  />
+            <UI:NavigationButton IconImage="/Kait;component/View/Assets/status.png"  Height="80"  DockPanel.Dock="Top" BottomText="Status"  />
+            <UI:NavigationButton IconImage="/Kait;component/View/Assets/lock.png"  Height="80"  DockPanel.Dock="Top" BottomText="Lock"  />
+            <UI:NavigationButton IconImage="/Kait;component/View/Assets/logout.png"  Height="80" VerticalAlignment="Bottom"  DockPanel.Dock="Bottom" BottomText="Exit"  />
 
 
         </DockPanel>
-        <Frame x:Name="PART_Frame" Grid.Column="1" Grid.Row="0"  Background="#fefefe"   NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" Grid.RowSpan="2">
+        <Frame x:Name="PART_Frame" Grid.Column="1" Grid.Row="0" Navigating="PART_Frame_Navigating"  Background="#fefefe"   NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" Grid.RowSpan="2">
             
         </Frame>
 

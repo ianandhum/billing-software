@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Kait"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" xmlns:mah1="http://metro.mahapps.com/winfx/xaml/shared" x:Class="Kait.App"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml" Startup="InitailizeDataContext">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

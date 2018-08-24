@@ -13,7 +13,7 @@ namespace Support
         // Very minimal implementation of INotifyPropertyChanged matching msdn
         // Note that this is dependent on .net 4.5+ because of CallerMemberName
         public event PropertyChangedEventHandler PropertyChanged;
-        public void RaisePropertyChanged([CallerMemberName] String propertyName = "")
+        public void RaisePropertyChanged( String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

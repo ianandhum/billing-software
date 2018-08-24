@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Kait</RootNamespace>
     <AssemblyName>Kait</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net40\ControlzEx.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\..\Provider.Data\Provider.Data\bin\Release\EntityFramework.dll</HintPath>
@@ -46,10 +46,9 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\..\Provider.Data\Provider.Data\bin\Release\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="MahApps.Metro, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.6.4\lib\net45\MahApps.Metro.dll</HintPath>
+    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net40\MahApps.Metro.dll</HintPath>
     </Reference>
-    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="Provider.Data">
       <HintPath>..\..\Provider.Data\Provider.Data\bin\Release\Provider.Data.dll</HintPath>
     </Reference>
@@ -64,8 +63,8 @@
     <Reference Include="System.Data.SQLite.Linq">
       <HintPath>..\..\Provider.Data\Provider.Data\bin\Release\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net40\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -85,7 +84,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Startup.cs" />
     <Compile Include="Support\NotifyUIBase.cs" />
+    <Compile Include="Support\RunCommand.cs" />
     <Compile Include="ViewModel\ClientVM.cs" />
     <Compile Include="ViewModel\NewInvoiceViewModel.cs" />
     <Compile Include="View\Pages\Home.xaml.cs">
@@ -171,7 +172,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="View\Assets\004-printer.png" />
@@ -183,6 +186,34 @@
   <ItemGroup>
     <Resource Include="View\Assets\settings.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="View\Assets\new-invoice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Assets\logout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Assets\status.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Assets\reports.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Assets\lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Assets\new-purchase.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Assets\receipt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Assets\accounts.png" />
+    <Resource Include="View\Assets\product.png" />
+    <Resource Include="View\Assets\returns-gst.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="SplashScreen.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
