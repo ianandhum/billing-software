@@ -1,15 +1,18 @@
 ﻿<Page
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Kait.View.Pages"
       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:UI="clr-namespace:View.UI"
-      xmlns:mah="http://metro.mahapps.com/winfx/xaml/shared" x:Class="Kait.View.Pages.NewInvoice"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/shared"
+      xmlns:SimpleChildWindow="clr-namespace:MahApps.Metro.SimpleChildWindow;assembly=MahApps.Metro.SimpleChildWindow"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" x:Class="Kait.View.Pages.NewInvoice"
       mc:Ignorable="d"
       d:DesignHeight="400" d:DesignWidth="1000"
-      Title="NewInvoice">
+      Title="NewInvoice"
+      FontSize="13">
 
     <Page.Resources>
         <SolidColorBrush Color="{StaticResource InputBoxLabelForeground}" x:Key="InputBoxLabelForegroundBrush"/>
@@ -22,6 +25,16 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="15"/>
         </Style>
+        <Style x:Key="LabelTitle" TargetType="{x:Type Label}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="#000"/>
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="Margin" Value="50"/>
+            <Setter Property="FontWeight" Value="Light"/>
+        </Style>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -51,9 +64,9 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="120"/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition MinHeight="350"/>
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0">
                                 <Grid.Background>
@@ -93,24 +106,31 @@
                                 <Button Grid.Column="8" Grid.Row="1" Width="100" HorizontalAlignment="Right" Margin="0,0,10,0"  Style="{DynamicResource SquareButtonStyle}" Content="Add item" Command="{Binding Path=AddItemCmd}"/>
 
                             </Grid>
-                            <DataGrid  Grid.Row="1"  ColumnWidth="*" x:Name="DGridInvoiceProducts" AutoGenerateColumns="False" ItemsSource="{ Binding Path=AddedInvoiceProducts,Mode=OneWay}" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" LoadingRow="DGridInvoiceProducts_LoadingRow">
-
+                            <DataGrid  Grid.Row="1"  ColumnWidth="*"  x:Name="DGridInvoiceProducts"   AutoGenerateColumns="False"  ItemsSource="{ Binding Path=AddedInvoiceProducts,Mode=OneWay,NotifyOnTargetUpdated=True}" SelectedItem="{Binding SelectedProductItem,Mode=TwoWay}"  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="LoadingRow">
+                                        <i:InvokeCommandAction Command="{Binding SourceUpdatedCmd}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
                                 <DataGrid.Columns>
 
-                                    <DataGridTextColumn Header="Product" Binding="{Binding Name}"/>
-                                    <DataGridTextColumn Header="HSN" Binding="{Binding HSN}" />
-                                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}"/>
-                                    <DataGridTextColumn Header="Unit Price"  Binding="{Binding Price}" />
-                                    <DataGridTextColumn Header="Discount" Binding="{Binding DiscountPercent}"/>
+                                    <DataGridTextColumn Header="No" Binding="{Binding SlNo}"/>
+                                    <DataGridTextColumn Header="Product" Binding="{Binding InvoiceProducts.Name}"/>
+                                    <DataGridTextColumn Header="HSN" Binding="{Binding InvoiceProducts.HSN}" />
+                                    <DataGridTextColumn Header="Quantity" Binding="{Binding InvoiceProducts.Quantity}"/>
+                                    <DataGridTextColumn Header="Unit Price"  Binding="{Binding InvoiceProducts.Price}" />
+                                    <DataGridTextColumn Header="Discount" Binding="{Binding InvoiceProducts.DiscountPercent}"/>
                                     <DataGridTextColumn Header="CGST" />
                                     <DataGridTextColumn Header="SGST" />
-                                    <DataGridTextColumn Header="Total"  Binding="{Binding Total}" />
+                                    <DataGridTextColumn Header="Total"  Binding="{Binding InvoiceProducts.Total}" />
                                     <DataGridTemplateColumn Header="Action" >
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <Button Margin="5">edit</Button>
-                                                    <Button Margin="5" Command="{Binding RmProductCmd}">remove</Button>
+                                                <!-- #TODO Method to remove a product item from the list -->
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                                    <Button Margin="5" >edit</Button>
+                                                    <!--Does not work for now-->
+                                                    <Button Margin="5"  Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.RmProductCmd}"  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.SelectedProductItem}">remove</Button>
                                                 </StackPanel>
 
                                             </DataTemplate>
@@ -120,7 +140,7 @@
                                 </DataGrid.Columns>
 
                             </DataGrid>
-                            <Label HorizontalContentAlignment="Center" Visibility="{Binding Path=IsProductListEmpty}" Grid.Row="2" FontSize="14">Currently there are no items in the list</Label>
+                            <Label HorizontalContentAlignment="Center" Visibility="{Binding Path=IsProductListEmpty,Converter={StaticResource BoolToVisibility}}" Grid.Row="2" FontSize="15" FontWeight="Bold">Purchase list is empty. Please add items</Label>
                             <StackPanel Grid.Row="3">
                                 <StackPanel.Background>
                                     <SolidColorBrush Color="#fafafa"/>
@@ -220,7 +240,7 @@
                                 <ColumnDefinition Width="3*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label Grid.Row="0" Grid.ColumnSpan="4" HorizontalAlignment="Center" Foreground="#000" FontSize="25" Margin="50" FontWeight="Light">Client Details</Label>
+                            <Label Grid.Row="0" Grid.ColumnSpan="4" Style="{StaticResource LabelTitle}">Client Details</Label>
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="1" Grid.Column="0">Name</Label>
                             <ComboBox Grid.Row="1" Grid.Column="1"  Margin="50,10" Padding="5" IsEditable="True"></ComboBox>
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="1" Grid.Column="2" FontSize="15">GSTIN</Label>
@@ -248,9 +268,63 @@
                         <TextBox Width="400" Height="100"></TextBox>
                     </TabItem>
                 </TabControl>
+                <!--
+                        Child window for displaying and editing  product information in invoice
+                -->
+                <SimpleChildWindow:ChildWindow
+                               Title="Overlay with Opacity"
+                               Padding="15"
+                               ChildWindowWidth="800"
+                               ShowCloseButton="True"
+                               ShowTitleBar="False"
+                               mc:Ignorable="d">
 
+                    <SimpleChildWindow:ChildWindow.OverlayBrush>
+                        <SolidColorBrush Opacity="0.8" Color="Black" />
+                      
+                    </SimpleChildWindow:ChildWindow.OverlayBrush>
+
+                    <StackPanel Margin="20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="8*"/>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="4*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition  />
+                                <RowDefinition  />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.ColumnSpan="4" Grid.Column="0"  Style="{StaticResource LabelTitle}" Margin="0,0,0,50">Edit Product Info</Label>
+                            <!-- Editable content in invoice products -->
+                            <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Product Name</Label>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="10"></ComboBox>
+                            <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Measuring Unit</Label>
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="10"></ComboBox>
+                            <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Description</Label>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="10" Height="100"></TextBox>
+                            <!-- Second Column -->
+                            <Label Grid.Row="1" Grid.Column="2" Style="{StaticResource clientLabelStyle}" Margin="10">Units</Label>
+                            <Controls:NumericUpDown Grid.Row="1" Grid.Column="3" Margin="10" HorizontalContentAlignment="Left"></Controls:NumericUpDown>
+                            <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource clientLabelStyle}" Margin="10">Discount</Label>
+                            <Controls:NumericUpDown Grid.Row="2" Grid.Column="3" Margin="10" MaxHeight="30"  HorizontalContentAlignment="Left"></Controls:NumericUpDown>
+                            <Label Grid.Row="3" Grid.Column="2" Style="{StaticResource clientLabelStyle}" Margin="10">CESS Percentage</Label>
+                            <Controls:NumericUpDown Grid.Row="3" Grid.Column="3" Margin="10" MaxHeight="30"  HorizontalContentAlignment="Left"></Controls:NumericUpDown>
+                            <Label Grid.Row="4" Grid.Column="2" Style="{StaticResource clientLabelStyle}" Margin="10">Inclusive Tax</Label>
+                            <CheckBox Grid.Row="4" Grid.Column="3" Margin="10" HorizontalAlignment="Right"></CheckBox>
+                            <Button Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="4" HorizontalAlignment="Right" Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}">save</Button>
+                            
+                        </Grid>
+                    </StackPanel>
+                </SimpleChildWindow:ChildWindow>
             </Grid>
 
         </ScrollViewer>
+        
     </Grid>
 </Page>

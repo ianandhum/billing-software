@@ -49,6 +49,9 @@
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net40\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="MahApps.Metro.SimpleChildWindow, Version=1.5.0.16, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.SimpleChildWindow.1.5.0\lib\net40\MahApps.Metro.SimpleChildWindow.dll</HintPath>
+    </Reference>
     <Reference Include="Provider.Data">
       <HintPath>..\..\Provider.Data\Provider.Data\bin\Release\Provider.Data.dll</HintPath>
     </Reference>
@@ -87,6 +90,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Support\NotifyUIBase.cs" />
     <Compile Include="Support\RunCommand.cs" />
+    <Compile Include="ViewModel\AddedInvoiceProductsVM.cs" />
     <Compile Include="ViewModel\ClientVM.cs" />
     <Compile Include="ViewModel\NewInvoiceViewModel.cs" />
     <Compile Include="View\Pages\Home.xaml.cs">

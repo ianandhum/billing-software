@@ -28,23 +28,27 @@ namespace Kait.ViewModel
         {
             Products = (from product in App.DataProvider.Products select product).ToList();
 
-            if (Products.Count()>0)
+            if (Products.Count() > 0)
             {
                 SelectedProduct = Products.FirstOrDefault();
                 MeasureTypes = Enum.GetValues(typeof(Measure)).Cast<Measure>();
 
             }
+            IsProductListEmpty = true;
         }
         void InitializeInvoiceProducts()
         {
+            AddedInvoiceProducts = new ObservableCollection<AddedInvoiceProductsVM>();
             
-            AddedInvoiceProducts = new ObservableCollection<InvoiceProducts>();
         }
         void SyncAddProductFields(Product product)
         {
-            SelectedMeasureType = product.MU;
-            Quantity = 1.0;
-            Discount = 0.0;
+            if (product != null)
+            {
+                SelectedMeasureType = product.MU;
+                Quantity = 1.0;
+                Discount = 0.0;
+            }
         }
 
         private Invoice _newinvoice;
@@ -61,27 +65,41 @@ namespace Kait.ViewModel
             }
 
         }
-        
+
         public IEnumerable<Product> Products { get; set; }
         
-        private ICollection<InvoiceProducts> invoiceProducts;
 
-        public ICollection<InvoiceProducts> AddedInvoiceProducts
+        private ObservableCollection<AddedInvoiceProductsVM> _InvoiceProductsVM;
+
+
+        public ObservableCollection<AddedInvoiceProductsVM> AddedInvoiceProducts
         {
             get
             {
-                return invoiceProducts;
+                return _InvoiceProductsVM;
             }
             set
             {
-                invoiceProducts = value;
-                
-               
+                _InvoiceProductsVM = value;
                 RaisePropertyChanged("AddedInvoiceProducts");
             }
         }
-        private Visibility _IsProductListEmpty;
-        public  Visibility IsProductListEmpty
+        private AddedInvoiceProductsVM _SelectedProductItem { get; set; }
+        public AddedInvoiceProductsVM SelectedProductItem
+        {
+            get
+            {
+                return _SelectedProductItem;
+            }
+            set
+            {
+
+                _SelectedProductItem = value;
+                RaisePropertyChanged("SelectedProductItem");
+            }
+        }
+        private bool _IsProductListEmpty;
+        public bool IsProductListEmpty
         {
             get
             {
@@ -98,15 +116,15 @@ namespace Kait.ViewModel
         public Product SelectedProduct {
             get {
                 return product_selected;
-                }
+            }
             set {
-                
+
                 product_selected = value;
                 SyncAddProductFields(value);
                 RaisePropertyChanged("SelectedProduct");
             }
         }
-        public IEnumerable<Measure> MeasureTypes { get; set;}
+        public IEnumerable<Measure> MeasureTypes { get; set; }
         private Measure measure_type;
         public Measure SelectedMeasureType {
             get {
@@ -126,7 +144,7 @@ namespace Kait.ViewModel
             }
             set
             {
-                if (value>=0.0)
+                if (value >= 0.0)
                 {
 
                     quantity = value;
@@ -144,7 +162,7 @@ namespace Kait.ViewModel
             }
             set
             {
-                if(0.0<=value && value <= 100.0)
+                if (0.0 <= value && value <= 100.0)
                 {
 
                     discount = value;
@@ -153,42 +171,44 @@ namespace Kait.ViewModel
 
             }
         }
-        private InvoiceProducts CloneProductToInvoiceProduct(Product product) {
-            InvoiceProducts invoiceProduct=null;
-            if (product !=null) {
-                invoiceProduct = new InvoiceProducts()
+        private AddedInvoiceProductsVM CloneProductToInvoiceProduct(Product product) {
+            AddedInvoiceProductsVM invoiceProduct = null;
+            if (product != null) {
+                invoiceProduct = new AddedInvoiceProductsVM()
                 {
-                    CESSPercent = (float)product.CESSPercent,
-                    Description = product.Description,
-                    HSN = product.HSN,
-                    Name = product.Name,
-                    Price = (float)product.Price,
+                     InvoiceProducts=new InvoiceProducts(){
+                        CESSPercent = (float)product.CESSPercent,
+                        Description = product.Description,
+                        HSN = product.HSN,
+                        Name = product.Name,
+                        Price = (float)product.Price,
+                    }
                 };
             }
             else
             {
-                invoiceProduct = new InvoiceProducts();
+                invoiceProduct = new AddedInvoiceProductsVM();
             }
             return invoiceProduct;
-            
+
 
         }
-        private void AddProductItem() {
-            
-            InvoiceProducts ip = CloneProductToInvoiceProduct(SelectedProduct);
-            ip.DiscountPercent = (float)discount;
-            ip.Quantity = (float)quantity;
-            ip.MU = measure_type.ToString();
+        private void AddProductItem(object parameter) {
+
+            AddedInvoiceProductsVM ip = CloneProductToInvoiceProduct(SelectedProduct);
+            ip.InvoiceProducts.DiscountPercent = (float)discount;
+            ip.InvoiceProducts.Quantity = (float)quantity;
+            ip.InvoiceProducts.MU = measure_type.ToString();
+            ip.InvoiceProducts.Total =(float) Decimal.Round((Decimal)(ip.InvoiceProducts.Quantity * ip.InvoiceProducts.Price),2);
             
             AddedInvoiceProducts.Add(ip);
-            if (invoiceProducts.Count > 0)
-            {
-                IsProductListEmpty = Visibility.Collapsed;
-            }
-            else
-            {
-                IsProductListEmpty = Visibility.Visible;
-            }
+            SelectedProduct = null;
+        }
+        private bool IsProductEmpty() {
+
+            if(SelectedProduct!=null)
+                 return true;
+            return false;
         }
         private ICommand _AddItemCmd;
         public ICommand AddItemCmd
@@ -196,7 +216,7 @@ namespace Kait.ViewModel
             get
             {
                 if (_AddItemCmd == null)
-                    _AddItemCmd = new RunCommand(AddProductItem);
+                    _AddItemCmd = new RunCommand(AddProductItem, IsProductEmpty);
                 return _AddItemCmd;
             }
             set
@@ -204,7 +224,90 @@ namespace Kait.ViewModel
                 _AddItemCmd = value;
             }
         }
-       
+
+        /*
+         * TODO || NOTWorking
+         *  Mechanism to add commands in the product collection  
+        */
+        private ICommand _RmProductCmd;
+        public ICommand RmProductCmd
+        {
+            get
+            {
+                if (_RmProductCmd == null)
+                    _RmProductCmd = new RunCommand(RemoveProductItem);
+                return _RmProductCmd;
+            }
+            set
+            {
+                _RmProductCmd = value;
+            }
+
+        }
+        private ICommand _SourceUpdatedCmd;
+        public ICommand SourceUpdatedCmd
+        {
+            get
+            {
+                if (_SourceUpdatedCmd == null)
+                    _SourceUpdatedCmd = new RunCommand(InvoiceProductRowAdded);
+                return _SourceUpdatedCmd;
+            }
+            set
+            {
+                _SourceUpdatedCmd = value;
+            }
+
+        }
+
+        private void InvoiceProductUpdated() {
+            if (AddedInvoiceProducts.Count > 0)
+            {
+                IsProductListEmpty = false;
+            }
+            else
+            {
+                IsProductListEmpty = true;
+            }
+            int index = 1;
+            foreach (var InvoiceItem in AddedInvoiceProducts)
+            {
+                /*
+                 * Re index slno after list reorder or update
+                 */
+                AddedInvoiceProducts.ElementAt(index- 1).SlNo = index;
+                index++;
+            }
+        }
+
+        private void InvoiceProductRowAdded(object obj)
+        {
+            if (AddedInvoiceProducts.Count != 0)
+                AddedInvoiceProducts.ElementAt(AddedInvoiceProducts.Count - 1).SlNo=AddedInvoiceProducts.Count;
+            InvoiceProductUpdated();
+        }
+
+        private void RemoveProductItem(object Item)
+        {
+            try
+            {
+                AddedInvoiceProducts.Remove((AddedInvoiceProductsVM)Item);
+                InvoiceProductUpdated();
+            }
+            catch(InvalidCastException e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+
+        /*
+* Test function is just used for debugging
+*/
+        private void CmdTest(object  e) {
+            Console.WriteLine(e.ToString());
+
+        }
     }
    
        

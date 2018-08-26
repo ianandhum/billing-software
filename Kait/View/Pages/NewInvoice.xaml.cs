@@ -65,9 +65,6 @@ namespace Kait.View.Pages
             NavigateToTab(TabType.ClientDetails);
         }
 
-        private void DGridInvoiceProducts_LoadingRow(object sender, DataGridRowEventArgs e)
-        {
-            Console.WriteLine(e.Row.Item.GetType());
-        }
+       
     }
 }

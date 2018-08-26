@@ -8,25 +8,45 @@ namespace Kait.Support
 {
     class RunCommand : ICommand
     {
-        private Action ExecuteCommand;
-        public event EventHandler CanExecuteChanged;
+        private Action<object> ExecuteCommand;
+        private Func<bool> CanExecuteCommand;
 
-        public RunCommand(Action executeAction)
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        public RunCommand(Action<object> executeAction)
         {
             ExecuteCommand = executeAction;
-            
+            CanExecuteCommand = null;
         }
+        public RunCommand(Action<object> executeAction,Func<bool> canExecuteAction)
+        {
+            ExecuteCommand = executeAction;
+            CanExecuteCommand = canExecuteAction;
+
+        }
+
+       
 
         public bool CanExecute(object parameter)
         {
-       
-            return true;
-            
+            if (CanExecuteCommand!=null)
+            {
+                return CanExecuteCommand();
+            }
+            else
+            {
+                return true;
+            }
+
         }
 
         public void Execute(object parameter)
         {
-            ExecuteCommand();
+            ExecuteCommand(parameter);
         }
     }
 }
