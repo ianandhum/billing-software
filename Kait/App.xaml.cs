@@ -20,6 +20,7 @@ namespace Kait
 
         public static DataContext DataProvider { get; set; }
 
+        public static Dictionary<string, string> Settings;
         public void InitailizeDataContext(object sender, StartupEventArgs e)
         {
             Thread StartAsyncEF6Migration = new Thread(CreateContext);
@@ -29,16 +30,19 @@ namespace Kait
         {
             Dispatcher.BeginInvoke(new Action(ActionCreateContext));
         }
-        public void ActionCreateContext()
+        
+        public  void  ActionCreateContext()
         {
             DataProvider = new DataContext();
-
-            //mockup queryies for startup Migration
-            var Result = DataProvider.Products.Count();
-
-
+            /* TODO
+             *  An App level settings config.
+             *   convert it into a lookup or dictionary for easy get set interface
+             */
+            Settings=DataProvider.Settings.ToDictionary(t => t.Key, t => t.Value);
+            // try with sample
+            Console.WriteLine(Settings["Roundoff"]);
         }
-
+        
 
 
 

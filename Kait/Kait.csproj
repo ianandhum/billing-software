@@ -52,9 +52,6 @@
     <Reference Include="MahApps.Metro.SimpleChildWindow, Version=1.5.0.16, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.SimpleChildWindow.1.5.0\lib\net40\MahApps.Metro.SimpleChildWindow.dll</HintPath>
     </Reference>
-    <Reference Include="Provider.Data">
-      <HintPath>..\..\Provider.Data\Provider.Data\bin\Release\Provider.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
@@ -74,7 +71,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -87,7 +83,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BusinessLogic\ComputeInvoice.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Support\AppendStrConverter.cs" />
+    <Compile Include="Support\PrependStrConverter.cs" />
     <Compile Include="Support\NotifyUIBase.cs" />
     <Compile Include="Support\RunCommand.cs" />
     <Compile Include="ViewModel\AddedInvoiceProductsVM.cs" />
@@ -218,6 +217,12 @@
   </ItemGroup>
   <ItemGroup>
     <SplashScreen Include="SplashScreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Provider.Data\Provider.Data\Provider.Data.csproj">
+      <Project>{07b46ca5-1c44-4019-a416-13591e08ce31}</Project>
+      <Name>Provider.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

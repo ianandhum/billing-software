@@ -39,7 +39,8 @@ namespace Kait.ViewModel
         void InitializeInvoiceProducts()
         {
             AddedInvoiceProducts = new ObservableCollection<AddedInvoiceProductsVM>();
-            
+            PaymentModes = Enum.GetValues(typeof(PaymentType)).Cast<PaymentType>();
+
         }
         void SyncAddProductFields(Product product)
         {
@@ -65,13 +66,8 @@ namespace Kait.ViewModel
             }
 
         }
-
         public IEnumerable<Product> Products { get; set; }
-        
-
         private ObservableCollection<AddedInvoiceProductsVM> _InvoiceProductsVM;
-
-
         public ObservableCollection<AddedInvoiceProductsVM> AddedInvoiceProducts
         {
             get
@@ -112,7 +108,6 @@ namespace Kait.ViewModel
             }
         }
         private Product product_selected;
-
         public Product SelectedProduct {
             get {
                 return product_selected;
@@ -125,6 +120,7 @@ namespace Kait.ViewModel
             }
         }
         public IEnumerable<Measure> MeasureTypes { get; set; }
+        public IEnumerable<PaymentType> PaymentModes { get; set; }
         private Measure measure_type;
         public Measure SelectedMeasureType {
             get {
@@ -144,7 +140,7 @@ namespace Kait.ViewModel
             }
             set
             {
-                if (value >= 0.0)
+                if (value > 0.0)
                 {
 
                     quantity = value;
@@ -177,11 +173,14 @@ namespace Kait.ViewModel
                 invoiceProduct = new AddedInvoiceProductsVM()
                 {
                      InvoiceProducts=new InvoiceProducts(){
-                        CESSPercent = (float)product.CESSPercent,
+                         //TODO Add all necessary init Data
+                        ProductId=product.ProductId,
+                        CESSPercent = product.CESSPercent,
                         Description = product.Description,
                         HSN = product.HSN,
                         Name = product.Name,
-                        Price = (float)product.Price,
+                        Price = product.Price,
+
                     }
                 };
             }
@@ -192,17 +191,6 @@ namespace Kait.ViewModel
             return invoiceProduct;
 
 
-        }
-        private void AddProductItem(object parameter) {
-
-            AddedInvoiceProductsVM ip = CloneProductToInvoiceProduct(SelectedProduct);
-            ip.InvoiceProducts.DiscountPercent = (float)discount;
-            ip.InvoiceProducts.Quantity = (float)quantity;
-            ip.InvoiceProducts.MU = measure_type.ToString();
-            ip.InvoiceProducts.Total =(float) Decimal.Round((Decimal)(ip.InvoiceProducts.Quantity * ip.InvoiceProducts.Price),2);
-            
-            AddedInvoiceProducts.Add(ip);
-            SelectedProduct = null;
         }
         private bool IsProductEmpty() {
 
@@ -225,10 +213,63 @@ namespace Kait.ViewModel
             }
         }
 
-        /*
-         * TODO || NOTWorking
-         *  Mechanism to add commands in the product collection  
-        */
+        private void AddProductItem(object parameter)
+        {
+
+            AddedInvoiceProductsVM ip = CloneProductToInvoiceProduct(SelectedProduct);
+            ip.InvoiceProducts.DiscountPercent =(decimal) discount;
+            ip.InvoiceProducts.Quantity = (decimal)quantity;
+            ip.InvoiceProducts.MU = measure_type;
+            // TODO : Allow App Settings for precision (currently it is 2,hardcoded)
+            ip.InvoiceProducts.Total = Decimal.Round((decimal)(ip.InvoiceProducts.Quantity * ip.InvoiceProducts.Price), 2);
+            AddedInvoiceProducts.Add(ip);
+            SelectedProduct = null;
+        }
+
+        private ICommand _EditProductCmd;
+        public ICommand EditProductCmd
+        {
+            get
+            {
+                if (_EditProductCmd == null)
+                    _EditProductCmd = new RunCommand(EditProductItem);
+                return _EditProductCmd;
+            }
+            set
+            {
+                _EditProductCmd = value;
+            }
+
+        }
+
+        private void EditProductItem(object obj)
+        {
+            IsEditProductItemOpen = true;
+        }
+
+        private ICommand _InvoiceProductSourceUpdatedCmd;
+        public ICommand InvoiceProductSourceUpdatedCmd
+        {
+            get
+            {
+                if (_InvoiceProductSourceUpdatedCmd == null)
+                    _InvoiceProductSourceUpdatedCmd = new RunCommand(InvoiceProductRowAdded);
+                return _InvoiceProductSourceUpdatedCmd;
+            }
+            set
+            {
+                _InvoiceProductSourceUpdatedCmd = value;
+            }
+
+        }
+
+        private void InvoiceProductRowAdded(object obj)
+        {
+            if (AddedInvoiceProducts.Count != 0)
+                AddedInvoiceProducts.ElementAt(AddedInvoiceProducts.Count - 1).SlNo=AddedInvoiceProducts.Count;
+            InvoiceProductUpdated();
+        }
+
         private ICommand _RmProductCmd;
         public ICommand RmProductCmd
         {
@@ -244,23 +285,20 @@ namespace Kait.ViewModel
             }
 
         }
-        private ICommand _SourceUpdatedCmd;
-        public ICommand SourceUpdatedCmd
+        private void RemoveProductItem(object Item)
         {
-            get
+            try
             {
-                if (_SourceUpdatedCmd == null)
-                    _SourceUpdatedCmd = new RunCommand(InvoiceProductRowAdded);
-                return _SourceUpdatedCmd;
+                AddedInvoiceProducts.Remove((AddedInvoiceProductsVM)Item);
+                InvoiceProductUpdated();
             }
-            set
+            catch(InvalidCastException e)
             {
-                _SourceUpdatedCmd = value;
+                Console.WriteLine(e.StackTrace);
             }
-
         }
-
-        private void InvoiceProductUpdated() {
+        private void InvoiceProductUpdated()
+        {
             if (AddedInvoiceProducts.Count > 0)
             {
                 IsProductListEmpty = false;
@@ -275,35 +313,235 @@ namespace Kait.ViewModel
                 /*
                  * Re index slno after list reorder or update
                  */
-                AddedInvoiceProducts.ElementAt(index- 1).SlNo = index;
+                AddedInvoiceProducts.ElementAt(index - 1).SlNo = index;
                 index++;
             }
         }
 
-        private void InvoiceProductRowAdded(object obj)
+        /*
+         * ChildWindowVisibility Handles
+         * 
+         */
+        private bool _IsEditProductItemOpen { get; set; }
+        public bool IsEditProductItemOpen
         {
-            if (AddedInvoiceProducts.Count != 0)
-                AddedInvoiceProducts.ElementAt(AddedInvoiceProducts.Count - 1).SlNo=AddedInvoiceProducts.Count;
-            InvoiceProductUpdated();
+            get
+            {
+                return _IsEditProductItemOpen;
+            }
+            set
+            {
+                _IsEditProductItemOpen = value;
+                RaisePropertyChanged("IsEditProductItemOpen");
+            }
         }
 
-        private void RemoveProductItem(object Item)
+        private bool _IsAddPaymentOpen { get; set; }
+        public bool IsAddPaymentOpen
         {
-            try
+            get
             {
-                AddedInvoiceProducts.Remove((AddedInvoiceProductsVM)Item);
-                InvoiceProductUpdated();
+                return _IsAddPaymentOpen;
             }
-            catch(InvalidCastException e)
+            set
             {
-                Console.WriteLine(e.StackTrace);
+                _IsAddPaymentOpen = value;
+                RaisePropertyChanged("IsAddPaymentOpen");
             }
         }
+
+        private bool _IsAddShippingChargeOpen { get; set; }
+        public bool IsAddShippingChargeOpen
+        {
+            get
+            {
+                return _IsAddShippingChargeOpen;
+            }
+            set
+            {
+                _IsAddShippingChargeOpen = value;
+                RaisePropertyChanged("IsAddShippingChargeOpen");
+            }
+        }
+
+        private bool _IsDiscountAllOpen { get; set; }
+        public bool IsDiscountAllOpen
+        {
+            get
+            {
+                return _IsDiscountAllOpen;
+            }
+            set
+            {
+                _IsDiscountAllOpen = value;
+                RaisePropertyChanged("IsDiscountAllOpen");
+            }
+        }
+
+        private bool _DiscountAllTrigger { get; set; }
+        public bool DiscountAllTrigger
+        {
+            get
+            {
+                return _DiscountAllTrigger;
+            }
+            set
+            {
+                _DiscountAllTrigger = value;
+                if (value)
+                {
+                    IsDiscountAllOpen = true;
+                }
+                RaisePropertyChanged("DiscountAllTrigger");
+            }
+        }
+        private bool _AddPaymentTrigger { get; set; }
+        public bool AddPaymentTrigger
+        {
+            get
+            {
+                return _AddPaymentTrigger;
+            }
+            set
+            {
+                _AddPaymentTrigger = value;
+                if (value)
+                {
+                    IsAddPaymentOpen = true;
+                }
+                RaisePropertyChanged("AddPaymentTrigger");
+            }
+        }
+        private bool _ShippingChargeTrigger { get; set; }
+        public bool ShippingChargeTrigger
+        {
+            get
+            {
+                return _ShippingChargeTrigger;
+            }
+            set
+            {
+
+                _ShippingChargeTrigger = value;
+                if (value)
+                {
+                    IsAddShippingChargeOpen = true;
+                }
+                RaisePropertyChanged("ShippingChargeTrigger");
+            }
+        }
+
+        // Commands For ChildWindows
+
+        
+        private ICommand _AddPaymentCmd;
+        public ICommand AddPaymentCmd
+        {
+            get
+            {
+                if (_AddPaymentCmd == null)
+                    _AddPaymentCmd = new RunCommand(AddPayment);
+                return _AddPaymentCmd;
+            }
+            set
+            {
+                _AddPaymentCmd = value;
+            }
+
+        }
+
+        private void AddPayment(object obj)
+        {
+            
+            IsAddPaymentOpen=false;
+            if (obj!=null && (Boolean)obj)
+            {
+                // execute ok button
+                Console.WriteLine("Ok Btn Payment");
+            }
+        }
+        private ICommand _DiscountAllCmd;
+        public ICommand DiscountAllCmd
+        {
+            get
+            {
+                if (_DiscountAllCmd == null)
+                    _DiscountAllCmd = new RunCommand(ApplyDiscountOnAll);
+                return _DiscountAllCmd;
+            }
+            set
+            {
+                _DiscountAllCmd = value;
+            }
+
+        }
+
+        private void ApplyDiscountOnAll(object obj)
+        {
+            IsDiscountAllOpen = false;
+            if (obj!=null && (Boolean)obj)
+            {
+                //Execute ok button
+                Console.WriteLine("Ok Btn Discount");
+                
+            }
+        }
+        private ICommand _ShippingChargeCmd;
+        public ICommand ShippingChargeCmd
+        {
+            get
+            {
+                if (_ShippingChargeCmd == null)
+                    _ShippingChargeCmd = new RunCommand(AddShippingCharge);
+                return _ShippingChargeCmd;
+            }
+            set
+            {
+                _ShippingChargeCmd = value;
+            }
+
+        }
+
+
+        private void AddShippingCharge(object obj)
+        {
+            
+            IsAddShippingChargeOpen = false;
+            if (obj != null && (Boolean)obj)
+            {
+                //Execute ok button
+                Console.WriteLine("Ok Btn shipping");
+            }
+        }
+
+
+        //save edit command
+        private ICommand _SaveEditsProductCmd;
+        public ICommand SaveEditsProductCmd
+        {
+            get
+            {
+                if (_SaveEditsProductCmd == null)
+                    _SaveEditsProductCmd = new RunCommand(SaveEditsProductItem);
+                return _SaveEditsProductCmd;
+            }
+            set
+            {
+                _SaveEditsProductCmd = value;
+            }
+
+        }
+
+        private void SaveEditsProductItem(object obj)
+        {
+            IsEditProductItemOpen = false;
+        }
+
 
 
         /*
-* Test function is just used for debugging
-*/
+        * Test function is just used for debugging
+        */
         private void CmdTest(object  e) {
             Console.WriteLine(e.ToString());
 

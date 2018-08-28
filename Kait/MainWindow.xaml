@@ -7,8 +7,7 @@
         xmlns:Dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:Kait"
         xmlns:UI="clr-namespace:View.UI"
-                      xmlns:simpleChildWindow="clr-namespace:MahApps.Metro.SimpleChildWindow;assembly=MahApps.Metro.SimpleChildWindow"
-                      mc:Ignorable="d"
+        mc:Ignorable="d"
         Title="Kait Electricals" MinHeight="700" MinWidth="1200" WindowState="Maximized">
     <Grid UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
