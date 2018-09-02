@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
+using Kait.View.Pages;
 using Provider.Data;
 namespace Kait
 {
@@ -39,11 +40,29 @@ namespace Kait
              *   convert it into a lookup or dictionary for easy get set interface
              */
             Settings=DataProvider.Settings.ToDictionary(t => t.Key, t => t.Value);
-            // try with sample
-            Console.WriteLine(Settings["Roundoff"]);
         }
-        
+        public static int SetConfig(string key,string value,bool saveInstant=false)
+        {
 
+            var settingKey=DataProvider.Settings.SingleOrDefault(v => v.Key == key);
+            if (settingKey != default(Settings))
+            {
+                settingKey.Value = value;
+                Settings[key] = value;
+            }
+            return (saveInstant)?DataProvider.SaveChanges():0;
+            
+        }
+        public static string GetConfig(string key)
+        {
+
+            string value;
+            if (!Settings.TryGetValue(key, out value))
+            {
+                return null;
+            }
+            return value;
+        }
 
 
     }

@@ -30,19 +30,17 @@ namespace Kait
         public MainWindow()
         {
             InitializeComponent();
-            PART_FrameService = PART_Frame.NavigationService;
-            PART_FrameService.Navigate(new Home());
+            PageHostService = PageHost.NavigationService;
+            PageHostService.Navigate(new Home());
            
                 
         }
-        public static NavigationService PART_FrameService { get; set; }
-       
-
+        public static NavigationService PageHostService { get; set; }
         private void NavigationButton_Click(object sender, EventArgs e)
         {
-            if (PART_FrameService.CanGoBack)
+            if (PageHostService.CanGoBack && PageHostService.CurrentSource.GetType()!=typeof(Home))
             {
-                PART_FrameService.Navigate(new Home());
+                PageHostService.Navigate(new Home());
             }
             
         }

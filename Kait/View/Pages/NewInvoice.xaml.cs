@@ -51,9 +51,9 @@ namespace Kait.View.Pages
         //Backbutton at the top
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MainWindow.PART_FrameService.CanGoBack)
+            if (MainWindow.PageHostService.CanGoBack)
             {
-                MainWindow.PART_FrameService.GoBack();
+                MainWindow.PageHostService.GoBack();
             }
 
             

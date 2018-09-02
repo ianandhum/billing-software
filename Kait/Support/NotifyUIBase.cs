@@ -6,12 +6,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Support
+namespace Kait.Support
 {
     public class NotifyUIBase : INotifyPropertyChanged
     {
-        // Very minimal implementation of INotifyPropertyChanged matching msdn
-        // Note that this is dependent on .net 4.5+ because of CallerMemberName
         public event PropertyChangedEventHandler PropertyChanged;
         public void RaisePropertyChanged( String propertyName = "")
         {

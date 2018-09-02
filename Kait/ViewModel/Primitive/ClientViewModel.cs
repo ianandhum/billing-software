@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using Provider.Data;
 namespace Kait.ViewModel
 {
-    public class ClientVM
+    public class ClientViewModel
     {
         public bool DefaultItem { get; set; } 
         public object Client { get; set; }
-        public ClientVM()
+        public ClientViewModel()
         {
             Client = new Client();
             DefaultItem = false;
         }
-        public ClientVM(bool type)
+        public ClientViewModel(bool type)
         {
             
             DefaultItem = type;

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Support;
 using Provider.Data;
-using System.Data.Entity;
-using System.Windows;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Kait.Support;
+using Kait.BusinessLogic;
+using Kait.ViewModel.Primitive;
+using System.Windows;
 
 namespace Kait.ViewModel
 {
@@ -19,14 +16,22 @@ namespace Kait.ViewModel
 
         public NewInvoiceViewModel()
         {
-            NewInvoice = new Invoice();
+            NewInvoice = new InvoiceViewModel();
             InitializeAddProductSection();
             InitializeInvoiceProducts();
+            InitializePayments();
+        }
+        void InitializeNavigation() {
+            CurrentTab = 0;
         }
 
+        void InitializePayments()
+        {
+            Payments = new InvoicePayments();
+        }
         void InitializeAddProductSection()
         {
-            Products = (from product in App.DataProvider.Products select product).ToList();
+            Products = new ObservableCollection<Product>((from product in App.DataProvider.Products select product));
 
             if (Products.Count() > 0)
             {
@@ -38,7 +43,7 @@ namespace Kait.ViewModel
         }
         void InitializeInvoiceProducts()
         {
-            AddedInvoiceProducts = new ObservableCollection<AddedInvoiceProductsVM>();
+            AddedInvoiceProducts = new ObservableCollection<InvoiceProductsViewModel>();
             PaymentModes = Enum.GetValues(typeof(PaymentType)).Cast<PaymentType>();
 
         }
@@ -47,28 +52,31 @@ namespace Kait.ViewModel
             if (product != null)
             {
                 SelectedMeasureType = product.MU;
-                Quantity = 1.0;
-                Discount = 0.0;
+                Quantity = 1;
+                Discount = 0;
             }
         }
 
-        private Invoice _newinvoice;
-        public Invoice NewInvoice
+
+        private InvoiceViewModel _NewInvoice;
+        public InvoiceViewModel NewInvoice
         {
             get
             {
-                return _newinvoice;
+                return _NewInvoice;
             }
             set
             {
-                _newinvoice = value;
+                _NewInvoice = value;
                 RaisePropertyChanged("NewInvoice");
             }
 
         }
-        public IEnumerable<Product> Products { get; set; }
-        private ObservableCollection<AddedInvoiceProductsVM> _InvoiceProductsVM;
-        public ObservableCollection<AddedInvoiceProductsVM> AddedInvoiceProducts
+
+        public ObservableCollection<Product> Products { get; set; }
+
+        private ObservableCollection<InvoiceProductsViewModel> _InvoiceProductsVM;
+        public ObservableCollection<InvoiceProductsViewModel> AddedInvoiceProducts
         {
             get
             {
@@ -80,8 +88,9 @@ namespace Kait.ViewModel
                 RaisePropertyChanged("AddedInvoiceProducts");
             }
         }
-        private AddedInvoiceProductsVM _SelectedProductItem { get; set; }
-        public AddedInvoiceProductsVM SelectedProductItem
+
+        private InvoiceProductsViewModel _SelectedProductItem { get; set; }
+        public InvoiceProductsViewModel SelectedProductItem
         {
             get
             {
@@ -94,6 +103,7 @@ namespace Kait.ViewModel
                 RaisePropertyChanged("SelectedProductItem");
             }
         }
+
         private bool _IsProductListEmpty;
         public bool IsProductListEmpty
         {
@@ -107,6 +117,7 @@ namespace Kait.ViewModel
                 RaisePropertyChanged("IsProductListEmpty");
             }
         }
+
         private Product product_selected;
         public Product SelectedProduct {
             get {
@@ -119,8 +130,11 @@ namespace Kait.ViewModel
                 RaisePropertyChanged("SelectedProduct");
             }
         }
+
         public IEnumerable<Measure> MeasureTypes { get; set; }
+
         public IEnumerable<PaymentType> PaymentModes { get; set; }
+
         private Measure measure_type;
         public Measure SelectedMeasureType {
             get {
@@ -131,62 +145,142 @@ namespace Kait.ViewModel
                 RaisePropertyChanged("SelectedMeasureType");
             }
         }
-        private double quantity;
-        public double Quantity
+
+        private decimal _Quantity;
+        public decimal Quantity
         {
             get
             {
-                return quantity;
+                return _Quantity;
             }
             set
             {
-                if (value > 0.0)
+                if (value > 0)
                 {
 
-                    quantity = value;
+                    _Quantity = value;
                     RaisePropertyChanged("Quantity");
                 }
 
             }
         }
-        private double discount;
-        public double Discount
+
+        private decimal _Discount;
+        public decimal Discount
         {
             get
             {
-                return discount;
+                return _Discount;
             }
             set
             {
-                if (0.0 <= value && value <= 100.0)
+                if (0 <= value && value <= 100)
                 {
 
-                    discount = value;
+                    _Discount = value;
                     RaisePropertyChanged("Discount");
                 }
 
             }
         }
-        private AddedInvoiceProductsVM CloneProductToInvoiceProduct(Product product) {
-            AddedInvoiceProductsVM invoiceProduct = null;
-            if (product != null) {
-                invoiceProduct = new AddedInvoiceProductsVM()
-                {
-                     InvoiceProducts=new InvoiceProducts(){
-                         //TODO Add all necessary init Data
-                        ProductId=product.ProductId,
-                        CESSPercent = product.CESSPercent,
-                        Description = product.Description,
-                        HSN = product.HSN,
-                        Name = product.Name,
-                        Price = product.Price,
 
-                    }
+        
+        private decimal _PayAmount;
+        public decimal PayAmount
+        {
+            get
+            {
+               
+                return _PayAmount;
+            }
+            set
+            {
+                if (value >= 0 && value <= NewInvoice.Total)
+                {
+
+                    _PayAmount = value;
+                    RaisePropertyChanged("PayAmount");
+                }
+
+            }
+        }
+
+        private PaymentType _PayType;
+        public PaymentType PayType
+        {
+            get
+            {
+                return _PayType;
+            }
+            set
+            {
+                if (value >= 0)
+                {
+
+                    _PayType = value;
+                    RaisePropertyChanged("PayType");
+                }
+
+            }
+        }
+
+        private decimal _DiscountAll;
+        public decimal DiscountAll
+        {
+            get
+            {
+                return _DiscountAll;
+            }
+            set
+            {
+                if (value >= 0)
+                {
+
+                    _DiscountAll = value;
+                    RaisePropertyChanged("DiscountAll");
+                }
+
+            }
+        }
+        private decimal _TotalDiscount;
+        public decimal TotalDiscount
+        {
+            get
+            {
+                return _TotalDiscount;
+            }
+            set
+            {
+                if (value >= 0)
+                {
+
+                    _TotalDiscount = value;
+                    RaisePropertyChanged("TotalDiscount");
+                }
+
+            }
+        }
+        
+        private InvoiceProductsViewModel CloneProductToInvoiceProduct(Product product) {
+            InvoiceProductsViewModel invoiceProduct = null;
+            if (product != null) {
+                invoiceProduct = new InvoiceProductsViewModel()
+                {
+                    //TODO Add all necessary init Data
+                    ProductId = product.ProductId,
+                    CESSPercent = product.CESSPercent,
+                    Description = product.Description,
+                    HSN = product.HSN,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Tax = product.Taxes,
+                    InclusiveTax = product.TaxIncluded,
+
                 };
             }
             else
             {
-                invoiceProduct = new AddedInvoiceProductsVM();
+                invoiceProduct = new InvoiceProductsViewModel();
             }
             return invoiceProduct;
 
@@ -194,10 +288,11 @@ namespace Kait.ViewModel
         }
         private bool IsProductEmpty() {
 
-            if(SelectedProduct!=null)
-                 return true;
+            if (SelectedProduct != null)
+                return true;
             return false;
         }
+
         private ICommand _AddItemCmd;
         public ICommand AddItemCmd
         {
@@ -212,18 +307,22 @@ namespace Kait.ViewModel
                 _AddItemCmd = value;
             }
         }
-
         private void AddProductItem(object parameter)
         {
 
-            AddedInvoiceProductsVM ip = CloneProductToInvoiceProduct(SelectedProduct);
-            ip.InvoiceProducts.DiscountPercent =(decimal) discount;
-            ip.InvoiceProducts.Quantity = (decimal)quantity;
-            ip.InvoiceProducts.MU = measure_type;
-            // TODO : Allow App Settings for precision (currently it is 2,hardcoded)
-            ip.InvoiceProducts.Total = Decimal.Round((decimal)(ip.InvoiceProducts.Quantity * ip.InvoiceProducts.Price), 2);
+            InvoiceProductsViewModel ip = CloneProductToInvoiceProduct(SelectedProduct);
+            ip.DiscountPercent = _Discount;
+            ip.Quantity = _Quantity;
+            ip.MU = measure_type;
             AddedInvoiceProducts.Add(ip);
+            InvoiceDataUpdated();
+            //TODO : remove added product from list so that user cannot add duplicate entry for same product in AddedInvoiceProducts 
+            //Solution Must Be Expanded To reflect every type of change in AddedInvoiceProducts add,remove
+
+            //ON HOLD
+            //CODE:      Products.Remove(SelectedProduct);
             SelectedProduct = null;
+           
         }
 
         private ICommand _EditProductCmd;
@@ -245,6 +344,7 @@ namespace Kait.ViewModel
         private void EditProductItem(object obj)
         {
             IsEditProductItemOpen = true;
+            InvoiceDataUpdated();
         }
 
         private ICommand _InvoiceProductSourceUpdatedCmd;
@@ -262,12 +362,10 @@ namespace Kait.ViewModel
             }
 
         }
-
         private void InvoiceProductRowAdded(object obj)
         {
-            if (AddedInvoiceProducts.Count != 0)
-                AddedInvoiceProducts.ElementAt(AddedInvoiceProducts.Count - 1).SlNo=AddedInvoiceProducts.Count;
-            InvoiceProductUpdated();
+            
+            InvoiceDataUpdated();
         }
 
         private ICommand _RmProductCmd;
@@ -289,33 +387,101 @@ namespace Kait.ViewModel
         {
             try
             {
-                AddedInvoiceProducts.Remove((AddedInvoiceProductsVM)Item);
-                InvoiceProductUpdated();
+                AddedInvoiceProducts.Remove((InvoiceProductsViewModel)Item);
+                InvoiceDataUpdated();
             }
-            catch(InvalidCastException e)
+            catch (InvalidCastException e)
             {
                 Console.WriteLine(e.StackTrace);
             }
         }
-        private void InvoiceProductUpdated()
+
+        private void InvoiceDataUpdated()
         {
-            if (AddedInvoiceProducts.Count > 0)
+
+            try
             {
-                IsProductListEmpty = false;
+                // Initialise Total count to default before calculation
+
+                TotalDiscount = 0;
+                NewInvoice.Total = 0;
+                NewInvoice.TotalTax = 0;
+                NewInvoice.SubTotal = 0;
+                if (AddedInvoiceProducts.Count > 0)
+                {
+                    IsProductListEmpty = false;
+                }
+                else
+                {
+                    IsProductListEmpty = true;
+                }
+                for (int index = 0; index < AddedInvoiceProducts.Count; index++)
+                {
+                    InvoiceProductsViewModel Item = AddedInvoiceProducts.ElementAt(index);
+                    // TODO : Allow App Settings for precision (currently it is 2,hardcoded)
+                    Item.TotalNoTax = Item.Quantity * Item.Price;
+
+                    if (Item.InclusiveTax)
+                    {
+                        //calculate inclusive tax
+                        Item.TotalNoTax = Item.TotalNoTax / ((Item.Tax.Rate / 100) + 1);
+                    }
+
+                    if (Item.DiscountPercent > 0)
+                    {
+                        Item.IsDiscount = true;
+                    }
+
+                    //calculate discount from discount percentage
+                    Decimal DiscountAmt =
+                        Item.DiscountPercent * Item.TotalNoTax / 100;
+
+                    //deduct disount amount from item net total
+                    Item.TotalNoTax -= DiscountAmt;
+
+
+                    // Find total tax amount from tax rate
+                    Item.TotalTax =
+                        Item.TotalNoTax * (Item.Tax.Rate) / 100;
+
+                    //calculate total amoount
+                    Item.Total =
+                        Item.TotalNoTax + Item.TotalTax;
+
+                    /*
+                     *  Round to 2 decimal points
+                     *  Item.Total = Decimal.Round(Item.Total, 2);
+                     *  DiscountAmt = Decimal.Round(DiscountAmt, 2);
+                    */
+                    //update invoice data
+                    TotalDiscount += DiscountAmt;
+                    NewInvoice.SubTotal += Item.Total;
+                    NewInvoice.TotalTax += Item.TotalTax;
+
+                    Item.Total = Decimal.Round(Item.Total, 2);
+                    
+                   // Re index slno after list reorder or update
+                   Item.SlNo = index + 1;
+
+                }
+                // Find Grant total
+                NewInvoice.Total = NewInvoice.SubTotal;
+                if (NewInvoice.ShippingCharge > 0)
+                {
+                    NewInvoice.Total += NewInvoice.ShippingCharge;
+                }
+                TotalDiscount = Decimal.Round(TotalDiscount,2);
+                NewInvoice.SubTotal = Decimal.Round(NewInvoice.SubTotal,2);
+                NewInvoice.Total = Decimal.Round(NewInvoice.Total,2);
+                NewInvoice.TotalTax = Decimal.Round(NewInvoice.TotalTax,2);
+
             }
-            else
-            {
-                IsProductListEmpty = true;
+            catch (OverflowException e)
+            {   
+                //if integer calculation is very large and cannot be affored by Decimal type
+                Console.WriteLine(e.StackTrace);
             }
-            int index = 1;
-            foreach (var InvoiceItem in AddedInvoiceProducts)
-            {
-                /*
-                 * Re index slno after list reorder or update
-                 */
-                AddedInvoiceProducts.ElementAt(index - 1).SlNo = index;
-                index++;
-            }
+
         }
 
         /*
@@ -346,6 +512,10 @@ namespace Kait.ViewModel
             set
             {
                 _IsAddPaymentOpen = value;
+                if (value)
+                {
+                    PayAmount = NewInvoice.Total;
+                }
                 RaisePropertyChanged("IsAddPaymentOpen");
             }
         }
@@ -377,6 +547,7 @@ namespace Kait.ViewModel
                 RaisePropertyChanged("IsDiscountAllOpen");
             }
         }
+        
 
         private bool _DiscountAllTrigger { get; set; }
         public bool DiscountAllTrigger
@@ -392,9 +563,14 @@ namespace Kait.ViewModel
                 {
                     IsDiscountAllOpen = true;
                 }
+                else
+                {
+                    //DiscountAll removed action
+                }
                 RaisePropertyChanged("DiscountAllTrigger");
             }
         }
+
         private bool _AddPaymentTrigger { get; set; }
         public bool AddPaymentTrigger
         {
@@ -409,9 +585,15 @@ namespace Kait.ViewModel
                 {
                     IsAddPaymentOpen = true;
                 }
+                else
+                {
+                    PayAmount = 0;
+                    InvoiceDataUpdated();
+                }
                 RaisePropertyChanged("AddPaymentTrigger");
             }
         }
+
         private bool _ShippingChargeTrigger { get; set; }
         public bool ShippingChargeTrigger
         {
@@ -427,13 +609,20 @@ namespace Kait.ViewModel
                 {
                     IsAddShippingChargeOpen = true;
                 }
+                else
+                {
+                    NewInvoice.ShippingCharge = 0;
+                    InvoiceDataUpdated();
+                }
                 RaisePropertyChanged("ShippingChargeTrigger");
             }
         }
 
         // Commands For ChildWindows
 
-        
+
+        public InvoicePayments Payments { get; set; }
+    
         private ICommand _AddPaymentCmd;
         public ICommand AddPaymentCmd
         {
@@ -449,17 +638,33 @@ namespace Kait.ViewModel
             }
 
         }
-
         private void AddPayment(object obj)
         {
             
             IsAddPaymentOpen=false;
             if (obj!=null && (Boolean)obj)
             {
-                // execute ok button
-                Console.WriteLine("Ok Btn Payment");
+                // Add Payment if obj is true
+                if (PayAmount >= 1)
+                {
+                    Payments.Payment = new Payment()
+                    {
+                        Flow=CashFlow.Inflow,
+                        Amount=PayAmount,
+                        Type=PayType
+                    };
+                    SaveInvoiceTest(null);
+                    return;
+                }
+
             }
+
+            //if noop
+            Payments.Payment=null;
+            AddPaymentTrigger = false;
+
         }
+
         private ICommand _DiscountAllCmd;
         public ICommand DiscountAllCmd
         {
@@ -475,17 +680,31 @@ namespace Kait.ViewModel
             }
 
         }
-
         private void ApplyDiscountOnAll(object obj)
         {
             IsDiscountAllOpen = false;
             if (obj!=null && (Boolean)obj)
             {
-                //Execute ok button
-                Console.WriteLine("Ok Btn Discount");
-                
+                //Save _Discount if obj is true
+                if (DiscountAll >= 0)
+                {
+                    for (int index=1;index<= AddedInvoiceProducts.Count;index++)
+                    {
+                        
+                        AddedInvoiceProducts.ElementAt(index - 1).DiscountPercent = DiscountAll;
+                        
+                    }
+                    InvoiceDataUpdated();
+                    return;
+                }
+
             }
+
+            //if noop
+            DiscountAll = 0;
+            DiscountAllTrigger = false;
         }
+
         private ICommand _ShippingChargeCmd;
         public ICommand ShippingChargeCmd
         {
@@ -501,21 +720,28 @@ namespace Kait.ViewModel
             }
 
         }
-
-
         private void AddShippingCharge(object obj)
         {
             
             IsAddShippingChargeOpen = false;
             if (obj != null && (Boolean)obj)
             {
-                //Execute ok button
-                Console.WriteLine("Ok Btn shipping");
+                //Shipping and packaging charge added if obj is true
+                if (NewInvoice.ShippingCharge > 0)
+                {
+                    InvoiceDataUpdated();
+                    return;
+                }
+                
             }
+            NewInvoice.ShippingCharge = 0;
+
+            //if noop
+            ShippingChargeTrigger = false;
         }
 
 
-        //save edit command
+        //Save updation to productitem
         private ICommand _SaveEditsProductCmd;
         public ICommand SaveEditsProductCmd
         {
@@ -531,23 +757,83 @@ namespace Kait.ViewModel
             }
 
         }
-
         private void SaveEditsProductItem(object obj)
         {
             IsEditProductItemOpen = false;
+            InvoiceDataUpdated();
         }
-
-
 
         /*
-        * Test function is just used for debugging
+        * Test Functions
         */
-        private void CmdTest(object  e) {
-            Console.WriteLine(e.ToString());
+        private void SaveInvoiceTest(object  e) {
+            //Sample Code for saving data to database
+            foreach (var invoice_product in AddedInvoiceProducts)
+            {
+                NewInvoice.GetInvoice().Products.Add(invoice_product.GetInvoiceProducts());
+            }
+
+            if(Payments!=null)
+                NewInvoice.GetInvoice().Payments.Add(Payments);
+            App.DataProvider.Invoices.Add(NewInvoice.GetInvoice());
+            App.DataProvider.SaveChanges();
+            NewInvoice = new InvoiceViewModel();
+            AddedInvoiceProducts.Clear();
+            InvoiceDataUpdated();
+
 
         }
+
+        //Navigation Items
+
+
+        private int _CurrentTab;
+
+        public int CurrentTab
+        {
+            get { return _CurrentTab; }
+            set {
+                _CurrentTab = value;
+                RaisePropertyChanged("CurrentTab");  
+            }
+        }
+
+        private ICommand _NavigateToCmd;
+        public ICommand NavigateToCmd
+        {
+            get
+            {
+                if (_NavigateToCmd == null)
+                    _NavigateToCmd = new RunCommand(NavigateTo);
+                return _NavigateToCmd;
+            }
+            set
+            {
+                _NavigateToCmd = value;
+            }
+
+        }
+
+        private void NavigateTo(object obj)
+        {
+            try
+            {
+                if (obj == null) throw new InvalidOperationException("Object is null");
+                CurrentTab = (Int16)obj;
+            }
+            catch (InvalidCastException e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+
+        }
+
+        
     }
-   
-       
     
+
 }

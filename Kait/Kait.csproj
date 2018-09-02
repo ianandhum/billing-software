@@ -86,12 +86,14 @@
     <Compile Include="BusinessLogic\ComputeInvoice.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Support\AppendStrConverter.cs" />
+    <Compile Include="Support\BoolInverter.cs" />
     <Compile Include="Support\PrependStrConverter.cs" />
     <Compile Include="Support\NotifyUIBase.cs" />
     <Compile Include="Support\RunCommand.cs" />
-    <Compile Include="ViewModel\AddedInvoiceProductsVM.cs" />
-    <Compile Include="ViewModel\ClientVM.cs" />
+    <Compile Include="ViewModel\Primitive\InvoiceProductsViewModel.cs" />
+    <Compile Include="ViewModel\Primitive\ClientViewModel.cs" />
     <Compile Include="ViewModel\NewInvoiceViewModel.cs" />
+    <Compile Include="ViewModel\Primitive\InvoiceViewModel.cs" />
     <Compile Include="View\Pages\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
@@ -224,5 +226,6 @@
       <Name>Provider.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

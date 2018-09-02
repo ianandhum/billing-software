@@ -3,7 +3,8 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Kait.View.Pages"
+      xmlns:local="clr-namespace:Kait.View.Pages" 
+      xmlns:VM="clr-namespace:Kait.ViewModel"
       xmlns:Support="clr-namespace:Kait.Support"
       xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:UI="clr-namespace:View.UI"
@@ -38,6 +39,10 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <Support:PrependStrConverter x:Key="PrependStrConverter"/>
         <Support:AppendStrConverter x:Key="AppendStrConverter"/>
+        <Support:BoolInverter x:Key="BoolInverter"/>
+        <system:Int16 x:Key="ItemPage">0</system:Int16>
+        <system:Int16 x:Key="ClientPage">1</system:Int16>
+        <system:Int16 x:Key="PrintPage">2</system:Int16>
         <system:String x:Key="RupeeSign">₹</system:String>
         <system:String x:Key="PercentSign">%</system:String>
         <system:Boolean x:Key="False">false</system:Boolean>
@@ -65,71 +70,93 @@
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TabControl Grid.Row="0" x:Name="InvoiceNavTab" Margin="-2,-11,0,0">
+                <TabControl Grid.Row="0" x:Name="InvoiceNavTab" Margin="-2,-11,0,0" SelectedIndex="{Binding Path=CurrentTab}">
 
-                    <TabItem  HeaderTemplate="{DynamicResource tabHeader}" HorizontalAlignment="Center">
+                    <TabItem  HeaderTemplate="{DynamicResource tabHeader}" HorizontalAlignment="Center" >
                         <Grid>
+                            <Grid.Background>
+                                <SolidColorBrush Color="#fafafa"/>
+                            </Grid.Background>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="120"/>
+                                <RowDefinition MinHeight="80"/>
                                 <RowDefinition />
                                 <RowDefinition />
-                                <RowDefinition MinHeight="350"/>
+                                <RowDefinition MinHeight="200"/>
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
-                                <Grid.Background>
-                                    <SolidColorBrush Color="#fafafa"/>
-                                </Grid.Background>
+                            <Grid Grid.Row="0" Margin="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="8*"/>
-                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="6*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="3*"/>
-                                    <ColumnDefinition Width="2*"/>
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="3*"/>
-
+                                    <ColumnDefinition Width="3*"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="60"/>
-                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
 
                                 </Grid.RowDefinitions>
-                                <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="8" FontSize="15" FontWeight="Bold" Foreground="#000" Padding="5,20" Content="Add Item"/>
+                                
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" Margin="8">
+                                    <Label Height="28" Foreground="#000" FontWeight="Medium"  Content="Product"/>
+                                    <ComboBox Padding="5" ItemsSource="{Binding Path=Products}" SelectedItem="{Binding Path=SelectedProduct,Mode=TwoWay}" DisplayMemberPath="Name"/>
+                                </StackPanel>
 
-                                <Label Grid.Column="0" Grid.Row="1" Foreground="#000" FontWeight="Medium" HorizontalAlignment="Right"  Content="Product"/>
-                                <ComboBox Grid.Column="1" Grid.Row="1" Padding="5" ItemsSource="{Binding Path=Products}" SelectedItem="{Binding Path=SelectedProduct,Mode=TwoWay}" DisplayMemberPath="Name">
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1"  Margin="8">
+                                    <Label Height="28" Foreground="#000" FontWeight="Medium" Content="Unit"/>
+                                    <ComboBox Padding="5" ItemsSource="{Binding Path=MeasureTypes,Mode=TwoWay}" SelectedItem="{Binding Path=SelectedMeasureType}"/>
+                                </StackPanel>
 
-                                </ComboBox>
-                                <Label Grid.Column="2" Grid.Row="1" Foreground="#000" FontWeight="Medium" HorizontalAlignment="Right" Content="Unit"/>
-                                <ComboBox Grid.Column="3" Grid.Row="1" Padding="5" ItemsSource="{Binding Path=MeasureTypes,Mode=TwoWay}" SelectedItem="{Binding Path=SelectedMeasureType}">
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Margin="8">
+                                    <Label Height="28" Foreground="#000"  FontWeight="Medium" Content="Quantity"/>
+                                    <Controls:NumericUpDown Padding="5" HorizontalContentAlignment="Left"  Value="{Binding Path=Quantity,Mode=TwoWay}" />
+                                </StackPanel>
 
-                                </ComboBox>
-                                <Label Grid.Column="4" Grid.Row="1" Foreground="#000"  FontWeight="Medium" HorizontalAlignment="Right"  Content="Quantity"/>
-                                <Controls:NumericUpDown Grid.Column="5" Grid.Row="1" Padding="5" HorizontalContentAlignment="Left"  Value="{Binding Path=Quantity,Mode=TwoWay}" />
-                                <Label Grid.Column="6" Grid.Row="1" Foreground="#000"  FontWeight="Medium" HorizontalAlignment="Right" Content="Discount (%)"/>
-                                <Controls:NumericUpDown Grid.Column="7" Grid.Row="1" Padding="5" HorizontalContentAlignment="Left" Value="{Binding Path=Discount,Mode=TwoWay}"  />
-                                <Button Grid.Column="8" Grid.Row="1" Width="100" HorizontalAlignment="Right" Margin="0,0,10,0"  Style="{DynamicResource SquareButtonStyle}" Content="Add item" Command="{Binding Path=AddItemCmd}"/>
-
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="3" Margin="8">
+                                    <Label  Height="28" Foreground="#000"  FontWeight="Medium" Content="Discount (%)"/>
+                                    <Controls:NumericUpDown Padding="5" HorizontalContentAlignment="Left" Value="{Binding Path=Discount,Mode=TwoWay}"  />
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="4" Margin="8">
+                                    <TextBlock Height="27"/>
+                                    <Button Width="100" HorizontalAlignment="Right"  Style="{DynamicResource SquareButtonStyle}" Content="Add item" Command="{Binding Path=AddItemCmd}"/>
+                                </StackPanel>
                             </Grid>
-                            <DataGrid  Grid.Row="1"  ColumnWidth="*" Padding="0" HorizontalContentAlignment="Center"  x:Name="DGridInvoiceProducts"   AutoGenerateColumns="False"  ItemsSource="{ Binding Path=AddedInvoiceProducts,Mode=OneWay,NotifyOnTargetUpdated=True}" SelectedItem="{Binding SelectedProductItem,Mode=TwoWay}"  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" CanUserSortColumns="False" CanUserReorderColumns="False">
+                            <DataGrid  Grid.Row="1"  ColumnWidth="*" Padding="0" IsReadOnly="True" HorizontalContentAlignment="Center" AlternatingRowBackground="#fafafa" RowBackground="#fff"  x:Name="DGridInvoiceProducts"   AutoGenerateColumns="False"  ItemsSource="{ Binding Path=AddedInvoiceProducts,Mode=OneWay,NotifyOnSourceUpdated=True}" SelectedItem="{Binding SelectedProductItem,Mode=TwoWay}"  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" CanUserSortColumns="False" CanUserReorderColumns="False">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="LoadingRow">
                                         <i:InvokeCommandAction Command="{Binding InvoiceProductSourceUpdatedCmd}" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="{x:Type DataGridCell}">
+                                        <Setter Property="Foreground" Value="#000"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Foreground" Value="#000"></Setter>
+                                                <Setter Property="Background" Value="#fffccc"></Setter>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="{x:Type DataGridRow}">
+                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                                    </Style>
+                                </DataGrid.RowStyle>
                                 <DataGrid.Columns>
-                                    
-
-                                    <DataGridTextColumn FontSize="14" FontWeight="Medium" Header="Serial No" Binding="{Binding SlNo}"/>
-                                    <DataGridTextColumn FontSize="14" FontWeight="Medium" Header="Product" Binding="{Binding InvoiceProducts.Name}"/>
-                                    <DataGridTextColumn FontSize="14" FontWeight="Medium" Header="Description" Binding="{Binding InvoiceProducts.Description}" />
-                                    <DataGridTextColumn FontSize="14" FontWeight="Medium" Header="Quantity" Binding="{Binding InvoiceProducts.Quantity}"/>
-                                    <DataGridTextColumn FontSize="14" FontWeight="Medium" Header="Unit Price"  Binding="{Binding InvoiceProducts.Price,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" />
-                                    <DataGridTextColumn FontSize="14" FontWeight="Medium" Header="Discount" Binding="{Binding InvoiceProducts.DiscountPercent,Converter={StaticResource AppendStrConverter},ConverterParameter={StaticResource PercentSign}}"/>
-                                    <DataGridTextColumn FontSize="14" FontWeight="Medium" Header="Total"  Binding="{Binding InvoiceProducts.Total,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" />
-                                    <DataGridTemplateColumn Header="Action" >
+                                    <DataGridTextColumn MaxWidth="90" FontSize="14" FontWeight="Medium" Header="Serial No" Binding="{Binding SlNo}"/>
+                                    <DataGridTextColumn MinWidth="200"  FontSize="14" FontWeight="Medium" Header="Product" Binding="{Binding Name}"/>
+                                    <DataGridTextColumn MinWidth="300" FontSize="14" FontWeight="Medium" Header="Description" Binding="{Binding Description}" />
+                                    <DataGridTextColumn MaxWidth="90" FontSize="14" FontWeight="Medium" Header="Quantity" Binding="{Binding Quantity}"/>
+                                    <DataGridTextColumn MaxWidth="130" FontSize="14" FontWeight="Medium" Header="Unit Price"  Binding="{Binding Price,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" />
+                                    <DataGridTextColumn MaxWidth="200" FontSize="14" FontWeight="Medium" Header="Discount" Binding="{Binding DiscountPercent,Converter={StaticResource AppendStrConverter},ConverterParameter={StaticResource PercentSign}}"/>
+                                    <DataGridTextColumn MaxWidth="90" FontSize="14" FontWeight="Medium" Header="Tax Rate"  Binding="{Binding Path=Tax.Rate,Converter={StaticResource AppendStrConverter},ConverterParameter={StaticResource PercentSign}}" />
+                                    <DataGridTextColumn MinWidth="100" FontSize="14" FontWeight="Medium" Header="Net Total"  Binding="{Binding Total,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" />
+                                    <DataGridTemplateColumn MinWidth="150" Header="Action" >
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -145,7 +172,10 @@
                                 </DataGrid.Columns>
 
                             </DataGrid>
-                            <Label HorizontalContentAlignment="Center" Visibility="{Binding Path=IsProductListEmpty,Converter={StaticResource BoolToVisibility}}" Grid.Row="2" FontSize="15" FontWeight="Bold" Padding="0" Margin="0">Purchase list is empty. Please add items</Label>
+                            <StackPanel Grid.Row="2" Orientation="Vertical">
+                                <Label HorizontalContentAlignment="Center" Background="#fff" Visibility="{Binding Path=IsProductListEmpty,Converter={StaticResource BoolToVisibility}}" FontSize="15" FontWeight="Bold" Padding="0,30" Margin="0">You haven't added any products to this invoice yet</Label>
+                                <Controls:Underline Grid.Row="2" Grid.ColumnSpan="5" BorderThickness="1" BorderBrush="#ddd"/>
+                            </StackPanel>
                             <StackPanel Grid.Row="3">
                                 <StackPanel.Background>
                                     <SolidColorBrush Color="#fafafa"/>
@@ -157,62 +187,60 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="20,5">
-                                        <CheckBox   FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding Path=DiscountAllTrigger,Mode=TwoWay}">Discount on all</CheckBox>
-                                        <Label Style="{StaticResource clientLabelStyle}" Foreground="#095" FontSize="14">25%</Label>
-                                    </StackPanel>
-                                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="20,5">
-                                        <CheckBox FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding Path=AddPaymentTrigger,Mode=TwoWay}" >Payment</CheckBox>
-                                        <Label Style="{StaticResource clientLabelStyle}" Visibility="{Binding Path=AddPaymentTrigger,Converter={StaticResource BoolToVisibility}}" Foreground="#095" FontSize="14">&#8377;2745.56</Label>
-
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="20,5">
-                                        <CheckBox FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding Path=ShippingChargeTrigger,Mode=TwoWay}">Add Shipping and packaging charges</CheckBox>
-                                        <Label Style="{StaticResource clientLabelStyle}" Visibility="{Binding Path=ShippingChargeTrigger,Converter={StaticResource BoolToVisibility}}" Foreground="#095" FontSize="14">&#8377;200.00</Label>
-                                    </StackPanel>
-                                    <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
-                                        <StackPanel Margin="5">
-                                            <Label>Terms And Conditions</Label>
-                                            <TextBox TextWrapping="Wrap" Width="250" Height="60">
-
-                                            </TextBox>
+                                    <StackPanel Grid.Column="0">
+                                        <StackPanel Orientation="Horizontal" Margin="20,5" MinHeight="30">
+                                            <CheckBox   FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding Path=DiscountAllTrigger,Mode=TwoWay}">Discount on all</CheckBox>
+                                            <Label Style="{StaticResource clientLabelStyle}" Visibility="{Binding Path=DiscountAllTrigger,Converter={StaticResource BoolToVisibility}}" Content="{Binding Path=DiscountAll,Converter={StaticResource AppendStrConverter},ConverterParameter={StaticResource PercentSign}}" Foreground="#095" FontSize="14"></Label>
                                         </StackPanel>
-                                        <StackPanel Margin="5">
-                                            <Label>Internal Notes</Label>
-                                            <TextBox TextWrapping="Wrap"  Width="250" Height="60">
-                                            </TextBox>
+                                        <StackPanel Orientation="Horizontal" Margin="20,5" MinHeight="30">
+                                            <CheckBox FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding Path=AddPaymentTrigger,Mode=TwoWay}" >Payment</CheckBox>
+                                            <Label Style="{StaticResource clientLabelStyle}" Visibility="{Binding Path=AddPaymentTrigger,Converter={StaticResource BoolToVisibility}}" Content="{Binding Path=PayAmount,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" Foreground="#095" FontSize="14"></Label>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="20,5" MinHeight="30">
+                                            <CheckBox FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding Path=ShippingChargeTrigger,Mode=TwoWay}">Add Shipping and packaging charges</CheckBox>
+                                            <Label Style="{StaticResource clientLabelStyle}" Visibility="{Binding Path=ShippingChargeTrigger,Converter={StaticResource BoolToVisibility}}" Content="{Binding Path=NewInvoice.ShippingCharge,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" Foreground="#095" FontSize="14"></Label>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <StackPanel Margin="5">
+                                                <Label>Terms And Conditions</Label>
+                                                <TextBox TextWrapping="Wrap" Width="250" Height="60" Text="{Binding NewInvoice.InvoiceNote}"/>
+                                            </StackPanel>
+                                            <StackPanel Margin="5">
+                                                <Label>Internal Notes</Label>
+                                                <TextBox TextWrapping="Wrap"  Width="250" Height="60" Text="{Binding NewInvoice.InternalNote}">
+                                                </TextBox>
+                                            </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <DockPanel>
+                                            <Label FontSize="14" FontWeight="SemiBold">Sub Total</Label>
+                                            <Label FontSize="15" FontWeight="Bold" HorizontalAlignment="Right" Content="{Binding Path=NewInvoice.SubTotal,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}"/>
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <Label FontSize="14"  FontWeight="SemiBold">Discount ( - )</Label>
+                                            <Label FontSize="15"   FontWeight="Bold" HorizontalAlignment="Right" Content="{Binding Path=TotalDiscount,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" />
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <Label FontSize="14"  FontWeight="SemiBold">Shipping and packaging charges ( + )</Label>
+                                            <Label FontSize="15"   FontWeight="Bold" HorizontalAlignment="Right" Content="{Binding Path=NewInvoice.ShippingCharge,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}"/>
+                                        </DockPanel>
+                                        <DockPanel>
+                                            <Label FontSize="14"  FontWeight="SemiBold">Tax Amount</Label>
+                                            <Label FontSize="15"   FontWeight="Bold" HorizontalAlignment="Right" Content="{Binding Path=NewInvoice.TotalTax,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" />
+                                        </DockPanel>
+                                        <Controls:Underline BorderBrush="#0067ff" LineThickness="2"/>
+                                        <DockPanel>
+                                            <Label FontSize="18" FontWeight="SemiBold" Foreground="#0067af">Total</Label>
+                                            <Label FontSize="18" Foreground="#0067af" FontWeight="Bold" HorizontalAlignment="Right"  Content="{Binding Path=NewInvoice.Total,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}"></Label>
+                                        </DockPanel>
 
-                                    <DockPanel Grid.Row="0" Grid.Column="1">
-                                        <Label FontSize="14" FontWeight="SemiBold">Sub Total</Label>
-                                        <Label FontSize="15" FontWeight="Bold" HorizontalAlignment="Right">&#x20b9;123.00</Label>
-                                    </DockPanel>
-                                    <DockPanel Grid.Row="1" Grid.Column="1">
-                                        <Label FontSize="14"  FontWeight="SemiBold">Discount</Label>
-                                        <Label FontSize="15"   FontWeight="Bold" HorizontalAlignment="Right">
-                                            &#x20b9; 12.3
-                                        </Label>
-                                    </DockPanel>
-                                    <DockPanel Grid.Row="2" Grid.Column="1" Margin="0,0,0,10">
-                                        <Label FontSize="14"  FontWeight="SemiBold">Shipping and packaging charges</Label>
-                                        <Label FontSize="15"   FontWeight="Bold" HorizontalAlignment="Right">&#8377; 100.00</Label>
-                                    </DockPanel>
-                                    <Controls:Underline BorderBrush="#0067ff" LineThickness="2" Grid.Row="2" Grid.Column="1"/>
-                                    <DockPanel Grid.Row="3" Grid.Column="1">
-                                        <Label FontSize="18" FontWeight="SemiBold" Foreground="#0067af">Total</Label>
-                                        <Label FontSize="18" Foreground="#0067af" FontWeight="Bold" HorizontalAlignment="Right">0.00  &#8377;</Label>
-                                    </DockPanel>
+                                        <Button Grid.Row="4" Grid.Column="1" Width="100" x:Name="NextBtnProductsTab" Padding="10" HorizontalAlignment="Right" Margin="10,50" Style="{DynamicResource AccentedSquareButtonStyle}" Content="Next" Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ClientPage}" IsEnabled="{Binding IsProductListEmpty,Converter={StaticResource BoolInverter}}"/>
 
-                                    <Button Grid.Row="4" Grid.Column="1" Width="100" x:Name="NextBtnProductsTab" Padding="10" HorizontalAlignment="Right" Margin="10,50" Style="{DynamicResource AccentedSquareButtonStyle}" Content="Next" Click="NextBtnProductsTab_Click"/>
-
+                                    </StackPanel>
+                                    
                                 </Grid>
                             </StackPanel>
 
@@ -261,7 +289,7 @@
 
                             <DockPanel  Grid.Row="8" Grid.Column="3"  >
                                 <Button Width="100" DockPanel.Dock="Right"  Margin="0,30,50,30" Padding="10"  Style="{DynamicResource AccentedSquareButtonStyle}">Next</Button>
-                                <Button Width="100" DockPanel.Dock="Right" Margin="10,30" Padding="10" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" >Back</Button>
+                                <Button Width="100" DockPanel.Dock="Right" Margin="10,30" Padding="10" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}"  Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ItemPage}">Back</Button>
                             </DockPanel>
                         </Grid>
                     </TabItem>
@@ -289,11 +317,11 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="5*"/>
-                                <ColumnDefinition Width="8*"/>
+                                <ColumnDefinition Width="7*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition  />
-                                <RowDefinition  />
+                                <RowDefinition />
+                                <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
@@ -301,19 +329,18 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <!-- Editable content in invoice products -->
                             <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Product Name</Label>
-                            <Label Grid.Row="0" Grid.Column="1" Margin="10" Content="{Binding Path=SelectedProductItem.InvoiceProducts.Name,Mode=OneWay}" Style="{StaticResource clientLabelStyle}" Foreground="#094" FontSize="16"></Label>
+                            <Label Grid.Row="0" Grid.Column="1" Margin="10" Content="{Binding Path=SelectedProductItem.Name,Mode=OneWay}" Style="{StaticResource clientLabelStyle}" Foreground="#094" FontSize="16"></Label>
                             <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource clientLabelStyle}"  Margin="10" >Measuring Unit</Label>
-                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="10" ItemsSource="{Binding Path=MeasureTypes}" SelectedValue="{Binding Path=SelectedProductItem.InvoiceProducts.MU}"></ComboBox>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="10" ItemsSource="{Binding Path=MeasureTypes}" SelectedValue="{Binding Path=SelectedProductItem.MU}"></ComboBox>
                             <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Description</Label>
-                            <TextBox Grid.Row="2" Grid.Column="1" Margin="10" Height="100" Text="{Binding Path=SelectedProductItem.InvoiceProducts.Description}"></TextBox>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="10" Height="100" Text="{Binding Path=SelectedProductItem.Description}"></TextBox>
                             <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Units</Label>
-                            <Controls:NumericUpDown Grid.Row="3" Grid.Column="1" Margin="10" HorizontalContentAlignment="Left"  Value="{Binding Path=SelectedProductItem.InvoiceProducts.Quantity}"/>
+                            <Controls:NumericUpDown Grid.Row="3" Grid.Column="1" Margin="10" HorizontalContentAlignment="Left"  Value="{Binding Path=SelectedProductItem.Quantity}"/>
                             <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Discount</Label>
-                            <Controls:NumericUpDown Grid.Row="4" Grid.Column="1" Margin="10" MaxHeight="30"  HorizontalContentAlignment="Left" Value="{Binding Path=SelectedProductItem.InvoiceProducts.DiscountPercent}"></Controls:NumericUpDown>
+                            <Controls:NumericUpDown Grid.Row="4" Grid.Column="1" Margin="10" MaxHeight="30"  HorizontalContentAlignment="Left" Value="{Binding Path=SelectedProductItem.DiscountPercent}"></Controls:NumericUpDown>
                             <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Inclusive Tax</Label>
-                            <CheckBox Grid.Row="5" Grid.Column="1" Margin="10" HorizontalAlignment="Right" IsChecked="{Binding Path=SelectedProductItem.InvoiceProducts.InclusiveTax}"></CheckBox>
+                            <CheckBox Grid.Row="5" Grid.Column="1" Margin="10" HorizontalAlignment="Left" IsChecked="{Binding Path=SelectedProductItem.InclusiveTax}"></CheckBox>
                             <Button Grid.Row="6" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=SaveEditsProductCmd}">close</Button>
 
                         </Grid>
@@ -326,7 +353,6 @@
                                Title="Add Payment Info"
                                Padding="15"
                                ChildWindowWidth="500"
-                               ShowCloseButton="True"
                                IsOpen="{Binding Path=IsAddPaymentOpen,Mode=TwoWay}"
                                >
 
@@ -345,11 +371,10 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <!-- Editable content in invoice products -->
                             <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Payment Method</Label>
-                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="10" ItemsSource="{Binding Path=PaymentModes,Mode=OneTime}"></ComboBox>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="10" ItemsSource="{Binding Path=PaymentModes,Mode=OneTime}" SelectedItem="{Binding Path=PayType}"></ComboBox>
                             <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Amount</Label>
-                            <TextBox Grid.Row="2" Grid.Column="1" Margin="10" ></TextBox>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="10" Text="{Binding Path=PayAmount}"></TextBox>
                             <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right">
                                 <Button  Width="100" Margin="10" Command="{Binding Path=AddPaymentCmd}" CommandParameter="{StaticResource False}">Cancel</Button>
                                 <Button  Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=AddPaymentCmd}" CommandParameter="{StaticResource True}">save</Button>
@@ -364,7 +389,6 @@
                                Title="Add discount to all"
                                Padding="15"
                                ChildWindowWidth="400"
-                               ShowCloseButton="True"
                                IsOpen="{Binding Path=IsDiscountAllOpen,Mode=TwoWay}">
 
                     <SimpleChildWindow:ChildWindow.OverlayBrush>
@@ -382,10 +406,9 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <!-- Editable content in invoice products -->
                             <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="20">Discount</Label>
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="20">
-                                <TextBox MinWidth="155" Padding="3"></TextBox>
+                                <TextBox MinWidth="155" Padding="3" Text="{Binding Path=DiscountAll}"></TextBox>
                                 <Label Style="{StaticResource clientLabelStyle}" BorderThickness="1,1,1,1" Content="%">
                                     <Label.BorderBrush>
                                         <SolidColorBrush Color="#ccc"/>
@@ -406,7 +429,6 @@
                                Title="Add Shipping and packaging charges"
                                Padding="15"
                                ChildWindowWidth="400"
-                               ShowCloseButton="True"
                                IsOpen="{Binding Path=IsAddShippingChargeOpen,Mode=TwoWay}"
                                mc:Ignorable="d">
 
@@ -425,9 +447,8 @@
                                 <RowDefinition  />
                                 <RowDefinition  />
                             </Grid.RowDefinitions>
-                            <!-- Editable content in invoice products -->
                             <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Amount</Label>
-                            <TextBox Grid.Row="0" Grid.Column="1" Margin="10"></TextBox>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="10" Text="{Binding Path=NewInvoice.ShippingCharge}"></TextBox>
                             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right">
                                 <Button  Width="100" Margin="10" Command="{Binding Path=ShippingChargeCmd}" CommandParameter="{StaticResource False}">Cancel</Button>
                                 <Button  Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=ShippingChargeCmd}" CommandParameter="{StaticResource True}">save</Button>
