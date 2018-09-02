@@ -16,10 +16,15 @@ namespace Kait.ViewModel
 
         public NewInvoiceViewModel()
         {
-            NewInvoice = new InvoiceViewModel();
+            NewInvoice = new InvoiceViewModel()
+            {
+                IssueDate=DateTime.Today,
+                DueDate=DateTime.Today
+            };
             InitializeAddProductSection();
             InitializeInvoiceProducts();
             InitializePayments();
+            InitializeClientSection();
         }
         void InitializeNavigation() {
             CurrentTab = 0;
@@ -458,10 +463,11 @@ namespace Kait.ViewModel
                     NewInvoice.SubTotal += Item.Total;
                     NewInvoice.TotalTax += Item.TotalTax;
 
+                    NewInvoice.Discount = Decimal.Round(TotalDiscount);
                     Item.Total = Decimal.Round(Item.Total, 2);
                     
-                   // Re index slno after list reorder or update
-                   Item.SlNo = index + 1;
+                    // Re index slno after list reorder or update
+                    Item.SlNo = index + 1;
 
                 }
                 // Find Grant total
@@ -767,22 +773,83 @@ namespace Kait.ViewModel
         * Test Functions
         */
         private void SaveInvoiceTest(object  e) {
-            //Sample Code for saving data to database
-            foreach (var invoice_product in AddedInvoiceProducts)
-            {
-                NewInvoice.GetInvoice().Products.Add(invoice_product.GetInvoiceProducts());
-            }
-
-            if(Payments!=null)
-                NewInvoice.GetInvoice().Payments.Add(Payments);
-            App.DataProvider.Invoices.Add(NewInvoice.GetInvoice());
-            App.DataProvider.SaveChanges();
-            NewInvoice = new InvoiceViewModel();
-            AddedInvoiceProducts.Clear();
-            InvoiceDataUpdated();
+            
 
 
         }
+
+        //Client Section
+
+        void InitializeClientSection() {
+
+            Clients = new ObservableCollection<Client>((from c in App.DataProvider.Clients select c));
+            
+        }
+
+        private ObservableCollection<Client> _Clients;
+
+        public ObservableCollection<Client> Clients
+        {
+            get { return _Clients; }
+            set
+            {
+                _Clients = value;
+                RaisePropertyChanged("Clients");
+            }
+
+        }
+
+        private Client _InvoiceClient;
+
+        public Client InvoiceClient
+        {
+            get { return _InvoiceClient; }
+            set
+            {
+                _InvoiceClient = value;
+                RaisePropertyChanged("InvoiceClient");
+            }
+
+        }
+
+        private bool _IsBothAddressSame;
+
+        public bool IsBothAddressSame
+        {
+            get { return _IsBothAddressSame; }
+            set {
+                _IsBothAddressSame = value;
+                if(value && InvoiceClient != null)
+                {
+                    InvoiceClient.ShippingAddress = InvoiceClient.BillingAddress;
+                    InvoiceClient.ShippingZIP = InvoiceClient.BillingZIP;
+                    InvoiceClient.ShippingCity = InvoiceClient.BillingCity;
+
+                }
+                RaisePropertyChanged("IsBothAddressSame");
+            }
+        }
+
+        private String _NewClientName;
+
+        public String NewClientName
+        {
+            get { return _NewClientName; }
+            set {
+                _NewClientName = value;
+                if (InvoiceClient == null)
+                {
+                    InvoiceClient = new Client()
+                    {
+                        Name = value
+                    };
+                }
+                RaisePropertyChanged("NewClientName");
+            }
+        }
+
+
+
 
         //Navigation Items
 
@@ -830,6 +897,43 @@ namespace Kait.ViewModel
                 Console.WriteLine(e.StackTrace);
             }
 
+        }
+
+
+        // Final Action
+        private ICommand _SaveInvoiceCmd;
+        public ICommand SaveInvoiceCmd
+        {
+            get
+            {
+                if (_SaveInvoiceCmd == null)
+                    _SaveInvoiceCmd = new RunCommand(SaveInvoice);
+                return _SaveInvoiceCmd;
+            }
+            set
+            {
+                _SaveInvoiceCmd = value;
+            }
+
+        }
+        
+
+        public void SaveInvoice(object obj)
+        {
+            //Sample Code for saving data to database
+            foreach (var invoice_product in AddedInvoiceProducts)
+            {
+                NewInvoice.GetInvoice().Products.Add(invoice_product.GetInvoiceProducts());
+            }
+
+            if (Payments != null)
+                NewInvoice.GetInvoice().Payments.Add(Payments);
+            NewInvoice.GetInvoice().Client = InvoiceClient;
+            App.DataProvider.Invoices.Add(NewInvoice.GetInvoice());
+            App.DataProvider.SaveChanges();
+            NewInvoice = new InvoiceViewModel();
+            AddedInvoiceProducts.Clear();
+            InvoiceDataUpdated();
         }
 
         

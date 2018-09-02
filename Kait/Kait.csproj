@@ -84,6 +84,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BusinessLogic\ComputeInvoice.cs" />
+    <Compile Include="BusinessLogic\PrintBillBase.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Support\AppendStrConverter.cs" />
     <Compile Include="Support\BoolInverter.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="Support\NotifyUIBase.cs" />
     <Compile Include="Support\RunCommand.cs" />
     <Compile Include="ViewModel\Primitive\InvoiceProductsViewModel.cs" />
-    <Compile Include="ViewModel\Primitive\ClientViewModel.cs" />
     <Compile Include="ViewModel\NewInvoiceViewModel.cs" />
     <Compile Include="ViewModel\Primitive\InvoiceViewModel.cs" />
     <Compile Include="View\Pages\Home.xaml.cs">

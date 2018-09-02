@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider.Data", "..\Provide
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "..\..\..\source\repos\ConsoleApp1\ConsoleApp1\ConsoleApp1.csproj", "{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp10", "..\..\..\source\repos\WpfApp10\WpfApp10\WpfApp10.csproj", "{8E4837E5-CCBE-43B1-A084-E700FCC07B55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,11 +29,15 @@ Global
 		{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F6C8608-1A7A-4DFD-AE94-FDF6542D2934}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E4837E5-CCBE-43B1-A084-E700FCC07B55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E4837E5-CCBE-43B1-A084-E700FCC07B55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E4837E5-CCBE-43B1-A084-E700FCC07B55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E4837E5-CCBE-43B1-A084-E700FCC07B55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A94ABEAB-C01C-40D5-82BE-803DCB59716C}
+		SolutionGuid = {FEDFE6D1-A351-424D-831E-BE70B4749C10}
 	EndGlobalSection
 EndGlobal

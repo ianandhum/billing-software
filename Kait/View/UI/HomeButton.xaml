@@ -11,7 +11,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel   Margin="10">
 
-        <Controls:Tile  Grid.Column="2" Grid.Row="1" Cursor="Hand" Background="Transparent"  Height="200" Width="250"   HorizontalContentAlignment="Center" Click="Button_Click">
+        <Controls:Tile  Grid.Column="2" Grid.Row="1" Cursor="Hand" Background="Transparent"  Height="200" Width="220"   HorizontalContentAlignment="Center" Click="Button_Click">
             <Grid x:Name="ContentGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                     <Image  Height="100" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" x:Name="Img" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,20"/>
