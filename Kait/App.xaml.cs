@@ -40,6 +40,7 @@ namespace Kait
              *   convert it into a lookup or dictionary for easy get set interface
              */
             Settings=DataProvider.Settings.ToDictionary(t => t.Key, t => t.Value);
+           
         }
         public static int SetConfig(string key,string value,bool saveInstant=false)
         {

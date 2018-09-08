@@ -7,19 +7,29 @@ using System.Collections.ObjectModel;
 using Kait.Support;
 using Kait.BusinessLogic;
 using Kait.ViewModel.Primitive;
-using System.Windows;
+using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
 
 namespace Kait.ViewModel
 {
     public class NewInvoiceViewModel : NotifyUIBase
     {
 
-        public NewInvoiceViewModel()
+        private IDialogCoordinator DialogCoordinator;
+
+        public NewInvoiceViewModel(IDialogCoordinator iDialogCoordinator)
         {
+            InitializeViewModel();
+            DialogCoordinator = iDialogCoordinator;
+
+        }
+        private void InitializeViewModel()
+        {
+            CurrentDate = DateTime.Now;
             NewInvoice = new InvoiceViewModel()
             {
-                IssueDate=DateTime.Today,
-                DueDate=DateTime.Today
+                IssueDate = DateTime.Today,
+                DueDate = DateTime.Today
             };
             InitializeAddProductSection();
             InitializeInvoiceProducts();
@@ -42,7 +52,7 @@ namespace Kait.ViewModel
             {
                 SelectedProduct = Products.FirstOrDefault();
                 MeasureTypes = Enum.GetValues(typeof(Measure)).Cast<Measure>();
-
+                
             }
             IsProductListEmpty = true;
         }
@@ -62,6 +72,20 @@ namespace Kait.ViewModel
             }
         }
 
+        private DateTime _CurrentDate;
+        public DateTime CurrentDate
+        {
+            get
+            {
+                return _CurrentDate;
+            }
+            set
+            {
+                _CurrentDate = value;
+                RaisePropertyChanged("CurrentDate");
+            }
+
+        }
 
         private InvoiceViewModel _NewInvoice;
         public InvoiceViewModel NewInvoice
@@ -400,6 +424,24 @@ namespace Kait.ViewModel
                 Console.WriteLine(e.StackTrace);
             }
         }
+        private bool _RoundOffTotal { get; set; }
+        public bool RoundOffTotal
+        {
+            get
+            {
+                return _RoundOffTotal;
+            }
+            set
+            {
+                _RoundOffTotal = value;
+                
+                // Reflect rounding to total
+                InvoiceDataUpdated();
+                RaisePropertyChanged("RoundOffTotal");
+            }
+        }
+
+
 
         private void InvoiceDataUpdated()
         {
@@ -442,12 +484,12 @@ namespace Kait.ViewModel
                         Item.DiscountPercent * Item.TotalNoTax / 100;
 
                     //deduct disount amount from item net total
-                    Item.TotalNoTax -= DiscountAmt;
-
+                    //Item.TotalNoTax -= DiscountAmt;
 
                     // Find total tax amount from tax rate
                     Item.TotalTax =
                         Item.TotalNoTax * (Item.Tax.Rate) / 100;
+
 
                     //calculate total amoount
                     Item.Total =
@@ -460,25 +502,22 @@ namespace Kait.ViewModel
                     */
                     //update invoice data
                     TotalDiscount += DiscountAmt;
-                    NewInvoice.SubTotal += Item.Total;
+                    NewInvoice.SubTotal += Item.TotalNoTax;
                     NewInvoice.TotalTax += Item.TotalTax;
 
-                    NewInvoice.Discount = Decimal.Round(TotalDiscount);
                     Item.Total = Decimal.Round(Item.Total, 2);
-                    
+                    //NewInvoice.SubTotal  -= NewInvoice.TotalTax;
                     // Re index slno after list reorder or update
                     Item.SlNo = index + 1;
 
                 }
                 // Find Grant total
-                NewInvoice.Total = NewInvoice.SubTotal;
-                if (NewInvoice.ShippingCharge > 0)
-                {
-                    NewInvoice.Total += NewInvoice.ShippingCharge;
-                }
+                NewInvoice.Total = NewInvoice.SubTotal + NewInvoice.TotalTax - TotalDiscount  + NewInvoice.ShippingCharge;
+                
                 TotalDiscount = Decimal.Round(TotalDiscount,2);
+                NewInvoice.Discount =TotalDiscount;
                 NewInvoice.SubTotal = Decimal.Round(NewInvoice.SubTotal,2);
-                NewInvoice.Total = Decimal.Round(NewInvoice.Total,2);
+                NewInvoice.Total = Decimal.Round(NewInvoice.Total,(RoundOffTotal)?0:2);
                 NewInvoice.TotalTax = Decimal.Round(NewInvoice.TotalTax,2);
 
             }
@@ -571,6 +610,15 @@ namespace Kait.ViewModel
                 }
                 else
                 {
+
+                    for (int index = 1; index <= AddedInvoiceProducts.Count; index++)
+                    {
+
+                        AddedInvoiceProducts.ElementAt(index - 1).DiscountPercent -= DiscountAll;
+
+                    }
+                    InvoiceDataUpdated();
+                    DiscountAll = 0;
                     //DiscountAll removed action
                 }
                 RaisePropertyChanged("DiscountAllTrigger");
@@ -697,7 +745,7 @@ namespace Kait.ViewModel
                     for (int index=1;index<= AddedInvoiceProducts.Count;index++)
                     {
                         
-                        AddedInvoiceProducts.ElementAt(index - 1).DiscountPercent = DiscountAll;
+                        AddedInvoiceProducts.ElementAt(index - 1).DiscountPercent += DiscountAll;
                         
                     }
                     InvoiceDataUpdated();
@@ -707,6 +755,13 @@ namespace Kait.ViewModel
             }
 
             //if noop
+            for (int index = 1; index <= AddedInvoiceProducts.Count; index++)
+            {
+
+                AddedInvoiceProducts.ElementAt(index - 1).DiscountPercent = DiscountAll;
+
+            }
+            InvoiceDataUpdated();
             DiscountAll = 0;
             DiscountAllTrigger = false;
         }
@@ -930,10 +985,21 @@ namespace Kait.ViewModel
                 NewInvoice.GetInvoice().Payments.Add(Payments);
             NewInvoice.GetInvoice().Client = InvoiceClient;
             App.DataProvider.Invoices.Add(NewInvoice.GetInvoice());
-            App.DataProvider.SaveChanges();
+            try
+            {
+                App.DataProvider.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                DialogCoordinator.ShowMessageAsync(this, "Error Occured", "Error occured while saving invoice\n"+e.Message,MessageDialogStyle.Affirmative);
+                Console.WriteLine("Error occured while updating database");
+                Console.WriteLine(e.StackTrace);
+            }
+            /*
             NewInvoice = new InvoiceViewModel();
             AddedInvoiceProducts.Clear();
             InvoiceDataUpdated();
+            */
         }
 
         

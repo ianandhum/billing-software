@@ -11,7 +11,9 @@
       xmlns:mah="http://metro.mahapps.com/winfx/xaml/shared"
       xmlns:SimpleChildWindow="clr-namespace:MahApps.Metro.SimpleChildWindow;assembly=MahApps.Metro.SimpleChildWindow"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:system="clr-namespace:System;assembly=mscorlib" x:Class="Kait.View.Pages.NewInvoice"
+      xmlns:system="clr-namespace:System;assembly=mscorlib" x:Class="Kait.View.Pages.NewInvoice"
+      xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      Dialog:DialogParticipation.Register="{Binding}"
       mc:Ignorable="d"
       d:DesignHeight="400" d:DesignWidth="1000"
       Title="NewInvoice"
@@ -60,7 +62,7 @@
             <Label VerticalAlignment="Stretch"  Width="200" HorizontalAlignment="Left" VerticalContentAlignment="Center" FontSize="16" FontWeight="Bold" FontFamily="sans-serif" Content="New Invoice"/>
             <StackPanel Width="317" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0">
                 <Label VerticalAlignment="Stretch"    HorizontalContentAlignment="Right" FontSize="12"  FontFamily="sans-serif" Content="Kait Electricals"/>
-                <Label VerticalAlignment="Stretch"     HorizontalContentAlignment="Right" FontSize="10"  FontFamily="sans-serif" x:Name="dateSlip"/>
+                <Label VerticalAlignment="Stretch"     HorizontalContentAlignment="Right" FontSize="10"  FontFamily="sans-serif" Content="{Binding CurrentDate,StringFormat='{}{0:MMM dd yyyy}'}"/>
 
             </StackPanel>
         </DockPanel>
@@ -82,8 +84,10 @@
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0" Margin="0,10">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="8*"/>
                                     <ColumnDefinition Width="6*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="3*"/>
@@ -96,26 +100,36 @@
 
                                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" Margin="8">
                                     <Label Height="28" Foreground="#000" FontWeight="Medium"  Content="Product"/>
-                                    <ComboBox Padding="5" ItemsSource="{Binding Path=Products}" SelectedItem="{Binding Path=SelectedProduct,Mode=TwoWay}" DisplayMemberPath="Name"/>
+                                    <ComboBox Padding="8" FontWeight="SemiBold" ItemsSource="{Binding Path=Products}" SelectedItem="{Binding Path=SelectedProduct,Mode=TwoWay}" DisplayMemberPath="Name"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1"  Margin="8">
                                     <Label Height="28" Foreground="#000" FontWeight="Medium" Content="Unit"/>
-                                    <ComboBox Padding="5" ItemsSource="{Binding Path=MeasureTypes,Mode=TwoWay}" SelectedItem="{Binding Path=SelectedMeasureType}"/>
+                                    <ComboBox Padding="8" FontWeight="SemiBold" ItemsSource="{Binding Path=MeasureTypes,Mode=TwoWay}" SelectedItem="{Binding Path=SelectedMeasureType}"/>
                                 </StackPanel>
 
-                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Margin="8">
-                                    <Label Height="28" Foreground="#000"  FontWeight="Medium" Content="Quantity"/>
-                                    <Controls:NumericUpDown Padding="5" HorizontalContentAlignment="Left"  Value="{Binding Path=Quantity,Mode=TwoWay}" />
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2"  Margin="8">
+                                    <Label Height="28" Foreground="#000" FontWeight="Medium" Content="Price"/>
+                                    <TextBox Padding="5"  FontWeight="SemiBold" IsReadOnly="True" Text="{Binding Path=SelectedProduct.Price,StringFormat='{}₹{0}'}"  />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="3" Margin="8">
-                                    <Label  Height="28" Foreground="#000"  FontWeight="Medium" Content="Discount (%)"/>
-                                    <Controls:NumericUpDown Padding="5" HorizontalContentAlignment="Left" Value="{Binding Path=Discount,Mode=TwoWay}"  />
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="3"  Margin="8">
+                                    <Label Height="28" Foreground="#000" FontWeight="Medium" Content="GST Rate"/>
+                                    <TextBox Padding="5"  FontWeight="SemiBold" Text="{Binding Path=SelectedProduct.Taxes.Rate,StringFormat='{}{0}%'}" IsReadOnly="True"/>
                                 </StackPanel>
+
                                 <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="4" Margin="8">
+                                    <Label Height="28" Foreground="#000"  FontWeight="Medium" Content="Quantity"/>
+                                    <Controls:NumericUpDown Padding="8"  FontWeight="SemiBold" HorizontalContentAlignment="Left"  Value="{Binding Path=Quantity,Mode=TwoWay}" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="5" Margin="8">
+                                    <Label  Height="28" Foreground="#000"  FontWeight="Medium" Content="Discount (%)"/>
+                                    <Controls:NumericUpDown Padding="8"  FontWeight="SemiBold" HorizontalContentAlignment="Left" Value="{Binding Path=Discount,Mode=TwoWay}"  />
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="6" Margin="8">
                                     <TextBlock Height="27"/>
-                                    <Button Width="100" HorizontalAlignment="Right"  Style="{DynamicResource SquareButtonStyle}" Content="Add item" Command="{Binding Path=AddItemCmd}"/>
+                                    <Button Width="100" Padding="8" HorizontalAlignment="Right"  Style="{DynamicResource SquareButtonStyle}" Content="Add item" Command="{Binding Path=AddItemCmd}"/>
                                 </StackPanel>
                             </Grid>
                             <DataGrid  Grid.Row="1"  ColumnWidth="*"  IsReadOnly="True" HorizontalContentAlignment="Center" AlternatingRowBackground="#fafafa" RowBackground="#fff"  x:Name="DGridInvoiceProducts"   AutoGenerateColumns="False"  ItemsSource="{ Binding Path=AddedInvoiceProducts,Mode=OneWay,NotifyOnSourceUpdated=True}" SelectedItem="{Binding SelectedProductItem,Mode=TwoWay}"  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" CanUserSortColumns="False" CanUserReorderColumns="False">
@@ -192,6 +206,9 @@
                                             <CheckBox FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding Path=ShippingChargeTrigger,Mode=TwoWay}">Add Shipping and packaging charges</CheckBox>
                                             <Label Style="{StaticResource clientLabelStyle}" Visibility="{Binding Path=ShippingChargeTrigger,Converter={StaticResource BoolToVisibility}}" Content="{Binding Path=NewInvoice.ShippingCharge,Converter={StaticResource PrependStrConverter},ConverterParameter={StaticResource RupeeSign}}" Foreground="#095" FontSize="14"></Label>
                                         </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="20,5" MinHeight="30">
+                                            <CheckBox FontSize="13" Width="300" HorizontalAlignment="Left" IsChecked="{Binding RoundOffTotal}">Round off Total Amount To Integer Value</CheckBox>
+                                        </StackPanel>
                                         <StackPanel Orientation="Horizontal">
                                             <StackPanel Margin="5">
                                                 <Label>Terms And Conditions</Label>
@@ -230,7 +247,7 @@
                                         <Button Grid.Row="4" Grid.Column="1" Width="100" x:Name="NextBtnProductsTab" Padding="10" HorizontalAlignment="Right" Margin="10,50" Style="{DynamicResource AccentedSquareButtonStyle}" Content="Next" Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ClientPage}" IsEnabled="{Binding IsProductListEmpty,Converter={StaticResource BoolInverter}}"/>
 
                                     </StackPanel>
-                                    
+
                                 </Grid>
                             </StackPanel>
 
@@ -238,7 +255,7 @@
                     </TabItem>
                     <TabItem  HorizontalAlignment="Center" HeaderTemplate="{DynamicResource tabHeader}" >
                         <Grid HorizontalAlignment="Stretch" MinWidth="1000" MinHeight="400"  VerticalAlignment="Stretch" Background="Transparent">
-                            
+
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition Height="auto"/>
@@ -263,12 +280,12 @@
                             <ComboBox Grid.Row="1" Grid.Column="1"  Margin="20,8" Padding="5" IsEditable="True" ItemsSource="{Binding Path=Clients}" DisplayMemberPath="Name" SelectedItem="{Binding Path=InvoiceClient}" Text="{Binding Path=NewClientName,UpdateSourceTrigger=LostFocus}"></ComboBox>
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="1" Grid.Column="2" FontSize="15">GSTIN</Label>
                             <TextBox Grid.Row="1" Grid.Column="3"  Margin="20,8" Padding="5" Text="{Binding Path=InvoiceClient.GSTIN}"></TextBox>
-                            
+
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Column="0" Grid.Row="2" FontSize="15">Billing Address</Label>
                             <TextBox Grid.Row="2" Grid.Column="1"  Margin="20,8" Height="80" Padding="5" TextWrapping="WrapWithOverflow" AcceptsReturn="True"  Text="{Binding Path=InvoiceClient.BillingAddress}"></TextBox>
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="3" Grid.Column="0" FontSize="15">Billing ZIP</Label>
                             <TextBox Grid.Row="3" Grid.Column="1"  Margin="20,8" Padding="5"  Text="{Binding Path=InvoiceClient.BillingZIP}"></TextBox>
-                            
+
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="4" Grid.Column="0" FontSize="15">Billing City</Label>
                             <TextBox Grid.Row="4" Grid.Column="1"  Margin="20,8" Padding="5" Text="{Binding Path=InvoiceClient.BillingCity}"></TextBox>
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Column="2" Grid.Row="2" FontSize="15">Shipping Address</Label>
@@ -286,22 +303,276 @@
                             <TextBox Grid.Row="5" Grid.Column="1"  Margin="20,8" Padding="5"  Text="{Binding Path=InvoiceClient.Telephone}"></TextBox>
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="5" Grid.Column="2" FontSize="15">Email Address</Label>
                             <TextBox Grid.Row="5" Grid.Column="3"  Margin="20,8" Padding="5"  Text="{Binding Path=InvoiceClient.Email}"></TextBox>
-                            
+
                             <Label Grid.Row="6" Grid.ColumnSpan="4" Style="{StaticResource LabelTitle}" Margin="0,10">Additional Details</Label>
-                            
+
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="7" Grid.Column="0" FontSize="15">Issue date</Label>
-                            <DatePicker Grid.Row="7" Grid.Column="1"  Margin="20,8" Padding="5"  Text="{Binding Path=NewInvoice.IssueDate}"></DatePicker>
+                            <DatePicker Grid.Row="7" Grid.Column="1"  Margin="20,8" Padding="5"  Text="{Binding Path=NewInvoice.IssueDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></DatePicker>
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="7" Grid.Column="2" FontSize="15">Due date</Label>
-                            <DatePicker Grid.Row="7" Grid.Column="3"  Margin="20,8" Padding="5"  Text="{Binding Path=NewInvoice.DueDate}"></DatePicker>
+                            <DatePicker Grid.Row="7" Grid.Column="3"  Margin="20,8" Padding="5"  Text="{Binding Path=NewInvoice.DueDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></DatePicker>
 
                             <DockPanel  Grid.Row="8" Grid.Column="3"  >
-                                <Button MinWidth="100" DockPanel.Dock="Right"  Margin="0,30,50,30" Padding="10"  Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=SaveInvoiceCmd}">Save and preview</Button>
-                                <Button Width="100" DockPanel.Dock="Right" Margin="10,30" Padding="10" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}"  Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ItemPage}">Back</Button>
+                                <Button MinWidth="100" DockPanel.Dock="Right"  Margin="0,30,50,30" Padding="10"  Style="{DynamicResource AccentedSquareButtonStyle}" Click="NavigateToPrintPreview" >Save and print</Button>
+                                <Button Width="100" DockPanel.Dock="Right" Margin="10,30" Padding="10" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ItemPage}">Back</Button>
                             </DockPanel>
                         </Grid>
                     </TabItem>
                     <TabItem HeaderTemplate="{DynamicResource tabHeader}" HorizontalAlignment="Center">
-                        <TextBox Width="400" Height="100"></TextBox>
+                        <Grid  Background="Transparent" HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="8.5in" Width="*"/>
+                                <ColumnDefinition MinWidth="400" MaxWidth="500"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Vertical" Grid.Column="1"   Background="Transparent" HorizontalAlignment="Stretch" Grid.RowSpan="2">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Width="100" Margin="30" Padding="10"  Style="{DynamicResource SquareButtonStyle}" Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ClientPage}">Back</Button>
+                                    <Button Margin="30" MinWidth="130" Style="{DynamicResource AccentedSquareButtonStyle}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="/Kait;component/View/Assets/004-printer.png" Height="20" Width="20"/>
+                                            <TextBlock Padding="5">Print Invoice</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                                
+                            </StackPanel>
+                            <DockPanel Grid.Column="0">
+                                <FlowDocumentPageViewer BorderBrush="#333" BorderThickness="2" HorizontalContentAlignment="Center" Background="#fff"  x:Name="documentReader" Padding="10"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"  Zoom="1" >
+                                    <FlowDocument IsColumnWidthFlexible="True" ColumnWidth="8.5in" FontFamily="Arial"    PageHeight= "11in" PageWidth="8.5in" FontSize="14" x:Name="PrintDocument">
+                                        <Section Padding="20" Background="#fff" BorderBrush="Transparent" BorderThickness="0">
+                                            <Table>
+
+                                                <TableRowGroup >
+                                                    <TableRow >
+
+                                                        <TableCell ColumnSpan="2" >
+                                                            <Paragraph TextAlignment="Left" FontSize="45">
+                                                                <Run Text="{Binding MetaData.CompanyInfo.Name}"/>
+                                                                <LineBreak/>
+                                                                <Run Text="{Binding MetaData.CompanyInfo.TagLine}" FontSize="16"/>
+                                                            </Paragraph>
+                                                        </TableCell>
+
+                                                        <TableCell>
+                                                            <Paragraph TextAlignment="Right" FontSize="12" >
+
+                                                                <Span >
+                                                                    <Run Text="{Binding MetaData.Invoice.TypeOnPrint}"/>
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <Bold FontSize="30" >
+                                                                    INVOICE
+                                                                    <Run Text="{Binding MetaData.Invoice.Prefix}"/>
+                                                                    <Run Text="{Binding NewInvoice.InvoiceId}"/>
+                                                                </Bold>
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Bold>Date</Bold>
+                                                                    <Run Text="{Binding Path=NewInvoice.IssueDate,StringFormat='{}{0:MMM dd yyyy}'}"/>
+                                                                </Span>
+                                                                <!-- Due Date hidden for v1.0-deploy -->
+                                                                <!--
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Bold>Due Date</Bold>
+                                                                    <Run Text="{Binding Path=NewInvoice.DueDate,StringFormat='{}{0:MMM dd yyyy}'}"/>
+                                                                </Span>
+                                                                -->
+                                                            </Paragraph>
+                                                        </TableCell>
+
+
+                                                    </TableRow>
+                                                    <TableRow>
+                                                        <TableCell ColumnSpan="3">
+                                                            <Paragraph  Padding="0,10">
+                                                                <Line X1="0" X2="1300" Y1="0" Y2="0" Stroke="#000" StrokeThickness="2" ></Line>
+                                                            </Paragraph>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                    <TableRow>
+                                                        <TableCell>
+                                                            <Paragraph Padding="0,10,0,0" TextAlignment="Left" Foreground="#000" FontSize="14">
+                                                                <Bold FontSize="16" Foreground="#009688">
+                                                                    <Run Text="{Binding MetaData.CompanyInfo.Name}"/>
+                                                                </Bold>
+                                                                <LineBreak/>
+
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Run Text="{Binding MetaData.CompanyInfo.Address}"/>
+                                                                </Span>
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Run Text="{Binding MetaData.CompanyInfo.ZIP,StringFormat={}PIN : {0}}"/>
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    <Run Text="{Binding MetaData.CompanyInfo.Place}"/>
+                                                                </Span>
+                                                                <Span>
+                                                                    <Run Text="{Binding MetaData.CompanyInfo.State}"/>
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    <Run Text="{Binding MetaData.CompanyInfo.GSTIN , StringFormat={} GSTIN : {0}}"/>
+                                                                </Span>
+                                                            </Paragraph>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Paragraph Padding="60,10,0,0" TextAlignment="Justify" FontSize="14" Foreground="#000">
+
+                                                                <Span FontWeight="Bold" FontSize="16" Foreground="#009688">
+                                                                    BILL TO
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Bold  >
+                                                                    <Run Text="{Binding Path=InvoiceClient.Name}"/>
+                                                                </Bold>
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Run Text="{Binding Path=InvoiceClient.BillingAddress}"/>
+                                                                </Span>
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Run Text="{Binding Path=InvoiceClient.BillingZIP,StringFormat={}PIN:{0}}"/>
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    <Run Text="{Binding Path=InvoiceClient.BillingCity}"/>
+                                                                </Span>
+                                                            </Paragraph>
+                                                        </TableCell>
+                                                        <TableCell >
+                                                            <Paragraph Padding="0,10,0,0" TextAlignment="Right" FontSize="15" Foreground="#000">
+
+                                                                <Bold FontSize="16" Foreground="#009688">
+                                                                    SHIP TO
+                                                                </Bold>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Bold  >
+                                                                    <Run Text="{Binding Path=InvoiceClient.Name}"/>
+                                                                </Bold>
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Run Text="{Binding Path=InvoiceClient.ShippingAddress}"/>
+                                                                </Span>
+                                                                <LineBreak></LineBreak>
+                                                                <Span>
+                                                                    <Run Text="{Binding Path=InvoiceClient.ShippingZIP,StringFormat={}PIN:{0}}"/>
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    <Run Text="{Binding Path=InvoiceClient.ShippingCity}"/>
+                                                                </Span>
+                                                            </Paragraph>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                    <!-- Hidden underline because of misterious wrap border in item table -->
+                                                    <!--
+                                                <TableRow>
+                                                    <TableCell ColumnSpan="3">
+
+                                                        <Paragraph Padding="0">
+                                                            <Line X1="0" X2="1200" Y1="0" Y2="1" Stroke="#000" StrokeThickness="1" ></Line>
+                                                        </Paragraph>
+                                                    </TableCell>
+                                                </TableRow>
+                                                -->
+                                                    <TableRow>
+                                                        <TableCell ColumnSpan="3">
+                                                            <!-- BUG: Weird black border around table or its nearest parent -->
+                                                            <Table CellSpacing="0"   x:Name="PrintDocumentProductTable" BorderThickness="1" BorderBrush="Black">
+                                                            </Table>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                    <TableRow>
+                                                        <TableCell Padding="0,10">
+                                                            <Paragraph>
+                                                                <Bold>
+                                                                    AUTHORIZED SIGNATORY
+                                                                </Bold>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Line X1="0" X2="200" Stroke="#009688" StrokeThickness="2"/>
+                                                            </Paragraph>
+                                                        </TableCell>
+
+                                                        <TableCell Padding="0,10" >
+                                                            <Paragraph FontSize="15" TextAlignment="Right">
+                                                                <Span>
+                                                                    TOTAL BEFORE TAX
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    DISCOUNT
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    TOTAL TAX AMOUNT
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Span FontWeight="Bold" FontSize="18">
+                                                                    TOTAL AMOUNT
+                                                                </Span>
+                                                                <!--
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    AMOUNT RECEIVED
+                                                                </Span>
+                                                                -->
+                                                            </Paragraph>
+                                                        </TableCell>
+                                                        <TableCell Padding="10">
+                                                            <Paragraph  TextAlignment="Right"  FontSize="16">
+                                                                <Bold>
+                                                                    ₹<Run Text="{Binding Path=NewInvoice.SubTotal}"/>
+                                                                </Bold>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Bold>
+                                                                    ₹<Run Text="{Binding Path=NewInvoice.Discount}"/>
+                                                                </Bold>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Bold>
+                                                                    ₹<Run Text="{Binding Path=NewInvoice.TotalTax}"/>
+                                                                </Bold>
+                                                                <LineBreak/>
+                                                                <LineBreak/>
+                                                                <Bold FontSize="18">
+                                                                    ₹<Run Text="{Binding Path=NewInvoice.Total}"/>
+                                                                </Bold>
+                                                                <!--
+                                                                <LineBreak/>
+                                                                <Bold>
+                                                                    ₹<Run Text="{Binding Path=PayAmount}"/>
+                                                                </Bold>
+                                                                -->
+                                                                <LineBreak/>
+                                                            </Paragraph>
+                                                        </TableCell>
+
+                                                    </TableRow>
+                                                </TableRowGroup>
+                                            </Table>
+
+
+
+                                        </Section>
+
+                                    </FlowDocument>
+                                </FlowDocumentPageViewer>
+
+                            </DockPanel>
+                           </Grid>
                     </TabItem>
                 </TabControl>
                 <!--
@@ -464,6 +735,6 @@
                     </StackPanel>
                 </SimpleChildWindow:ChildWindow>
             </Grid>
-        </ScrollViewer> 
+        </ScrollViewer>
     </Grid>
 </Page>

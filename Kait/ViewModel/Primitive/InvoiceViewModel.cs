@@ -15,6 +15,16 @@ namespace Kait.ViewModel.Primitive
         public InvoiceViewModel(Invoice invoice)
         {
             Invoice = invoice;
+
+        }
+        public int InvoiceId
+        {
+            get { return Invoice.InvoiceId; }
+            set
+            {
+                Invoice.InvoiceId = value;
+                RaisePropertyChanged("InvoiceId");
+            }
         }
         public int ClientId
         {

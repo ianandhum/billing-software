@@ -38,7 +38,7 @@ namespace Kait
         public static NavigationService PageHostService { get; set; }
         private void NavigationButton_Click(object sender, EventArgs e)
         {
-            if (PageHostService.CanGoBack && PageHostService.CurrentSource.GetType()!=typeof(Home))
+            if (PageHostService.CanGoBack)
             {
                 PageHostService.Navigate(new Home());
             }

@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:Kait"
         xmlns:UI="clr-namespace:View.UI"
         mc:Ignorable="d"
-        Title="Kait Electricals" MinHeight="700" MinWidth="1200" WindowState="Maximized">
+        Title="Kait Electricals" MinHeight="700" MinWidth="1200" WindowState="Maximized" ShowMaxRestoreButton="False" >
     <Grid UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
