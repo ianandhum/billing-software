@@ -25,9 +25,14 @@ namespace Kait.View.Pages
             InitializeComponent();
         }
 
-        private void HomeButton_Handler(object sender, EventArgs e)
+        private void NewInvoiceTrigger(object sender, EventArgs e)
         {
             MainWindow.PageHostService.Navigate(new NewInvoice());
+        }
+
+        private void NewPurchaseTrigger(object sender, EventArgs e)
+        {
+            MainWindow.PageHostService.Navigate(new NewPurchase());
         }
     }
 }

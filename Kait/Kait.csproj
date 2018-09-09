@@ -91,14 +91,20 @@
     <Compile Include="Support\PrependStrConverter.cs" />
     <Compile Include="Support\NotifyUIBase.cs" />
     <Compile Include="Support\RunCommand.cs" />
+    <Compile Include="ViewModel\NewPurchaseViewModel.cs" />
+    <Compile Include="ViewModel\Primitive\PurchaseProductsViewModel.cs" />
     <Compile Include="ViewModel\Primitive\InvoiceProductsViewModel.cs" />
     <Compile Include="ViewModel\NewInvoiceViewModel.cs" />
+    <Compile Include="ViewModel\Primitive\PurchaseViewModel.cs" />
     <Compile Include="ViewModel\Primitive\InvoiceViewModel.cs" />
     <Compile Include="View\Pages\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\NewInvoice.xaml.cs">
       <DependentUpon>NewInvoice.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\NewPurchase.xaml.cs">
+      <DependentUpon>NewPurchase.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UI\ComboBox.xaml.cs" />
     <Compile Include="View\UI\HomeButton.xaml.cs">
@@ -124,6 +130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pages\NewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\NewPurchase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -62,6 +62,11 @@ namespace Kait
             @double.From = 0.0;
             (e.Content as Page).BeginAnimation(OpacityProperty, @double);
         }
+
+        private void ExitApp(object sender, EventArgs e)
+        {
+            
+        }
     }
 
 }
