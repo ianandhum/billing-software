@@ -21,30 +21,46 @@ namespace Kait.ViewModel
         {
             InitializeViewModel();
             DialogCoordinator = iDialogCoordinator;
+            FreshInvoice = true;
 
         }
+        public NewInvoiceViewModel(IDialogCoordinator iDialogCoordinator,InvoiceViewModel existingViewModel)
+        {
+            InitializeViewModelWithInvoice(existingViewModel);
+            DialogCoordinator = iDialogCoordinator;
+            FreshInvoice = false;
+        }
+        
+        private bool FreshInvoice { get; set; }
         private void InitializeViewModel()
         {
-            CurrentDate = DateTime.Now;
+            CurrentDate = DateTime.Today;
+            string NextInvoiceId = "1";
             try
             {
-                MetaData = new MetaData(App.DataProvider)
-                {
-                    Invoice = new MetaData.InvoiceMeta()
-                    {
-                        NextInvoiceId = (App.DataProvider.Invoices.Max((x) => x.InvoiceId) + 1).ToString(),
-                        Prefix = App.GetConfig("InvoicePrefix"),
-                        TypeOnPrint = App.GetConfig("FirstTypeOnInvoicePrint")
-                    }
-                };
+                NextInvoiceId = (App.DataProvider.Invoices.Max((x) => x.InvoiceId) + 1).ToString();
 
             }
             catch (Exception e)
             {
 
-                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+
             }
-            
+            finally
+            {
+                MetaData = new MetaData(App.DataProvider)
+                {
+
+                    Invoice = new MetaData.InvoiceMeta()
+                    {
+                        NextInvoiceId = NextInvoiceId,
+                        Prefix = App.GetConfig("InvoicePrefix"),
+                        TypeOnPrint = App.GetConfig("FirstTypeOnInvoicePrint")
+                    }
+                };
+            }
+
             NewInvoice = new InvoiceViewModel()
             {
                 IssueDate = DateTime.Today,
@@ -55,13 +71,39 @@ namespace Kait.ViewModel
             InitializePayments();
             InitializeClientSection();
         }
+        private void InitializeViewModelWithInvoice(InvoiceViewModel invoice)
+        {
+            CurrentDate = DateTime.Today;
+            MetaData = new MetaData(App.DataProvider)
+            {
+
+                Invoice = new MetaData.InvoiceMeta()
+                {
+                    NextInvoiceId = invoice.InvoiceId.ToString(),
+                    Prefix = App.GetConfig("InvoicePrefix"),
+                    TypeOnPrint = App.GetConfig("FirstTypeOnInvoicePrint")
+                }
+            };
+            NewInvoice = invoice;
+            InitializeAddProductSection();
+            InitializeInvoiceProducts(new ObservableCollection<InvoiceProducts>(invoice.GetInvoice().Products));
+            InitializePayments(invoice.GetInvoice().Payments.FirstOrDefault());
+            InitializeClientSection(invoice.GetInvoice().Client);
+            InvoiceDataUpdated();
+        }
         void InitializeNavigation() {
             CurrentTab = 0;
         }
 
-        void InitializePayments()
+        void InitializePayments(InvoicePayments invoicePayment=null)
         {
-            Payments = new InvoicePayments();
+            InvoicePayments payments = new InvoicePayments();
+            if(invoicePayment != null)
+            {
+                payments = invoicePayment;
+                
+            }
+            Payments = payments;
         }
         void InitializeAddProductSection()
         {
@@ -73,14 +115,24 @@ namespace Kait.ViewModel
                 MeasureTypes = Enum.GetValues(typeof(Measure)).Cast<Measure>();
                 
             }
-            IsProductListEmpty = true;
         }
-        void InitializeInvoiceProducts()
+        void InitializeInvoiceProducts(ObservableCollection<InvoiceProducts> IProducts=null)
         {
-            AddedInvoiceProducts = new ObservableCollection<InvoiceProductsViewModel>();
+
+            ObservableCollection<InvoiceProductsViewModel> invoiceProductsVMs=new ObservableCollection<InvoiceProductsViewModel>();
+            if (IProducts != null) foreach (var item in IProducts)
+            {
+                invoiceProductsVMs.Add(new InvoiceProductsViewModel(item));
+            }
+
+            AddedInvoiceProducts = invoiceProductsVMs;
+            if (IProducts is null)
+                IsProductListEmpty = true;
             PaymentModes = Enum.GetValues(typeof(PaymentType)).Cast<PaymentType>();
 
         }
+        
+       
         void SyncAddProductFields(Product product)
         {
             if (product != null)
@@ -439,6 +491,8 @@ namespace Kait.ViewModel
             try
             {
                 AddedInvoiceProducts.Remove((InvoiceProductsViewModel)Item);
+                if (!FreshInvoice)
+                    App.DataProvider.InvoiceProducts.Remove(((InvoiceProductsViewModel)Item).GetInvoiceProducts());
                 InvoiceDataUpdated();
             }
             catch (InvalidCastException e)
@@ -487,12 +541,17 @@ namespace Kait.ViewModel
                 for (int index = 0; index < AddedInvoiceProducts.Count; index++)
                 {
                     InvoiceProductsViewModel Item = AddedInvoiceProducts.ElementAt(index);
-                    // TODO : Allow App Settings for precision (currently it is 2,hardcoded)
+                    // TODO : Allow App Settings for precision (currently it is App.GetConfig("RoundOffValues"),hardcoded)
                     Item.TotalNoTax = Item.Quantity * Item.Price;
 
+                    //calculate discount from discount percentage
+                    Decimal DiscountAmt =
+                        Item.DiscountPercent * Item.TotalNoTax / 100;
+                    
                     if (Item.InclusiveTax)
                     {
                         //calculate inclusive tax
+                        Item.TotalNoTax = Item.TotalNoTax - DiscountAmt;
                         Item.TotalNoTax = Item.TotalNoTax / ((Item.Tax.Rate / 100) + 1);
                     }
 
@@ -501,33 +560,35 @@ namespace Kait.ViewModel
                         Item.IsDiscount = true;
                     }
 
-                    //calculate discount from discount percentage
-                    Decimal DiscountAmt =
-                        Item.DiscountPercent * Item.TotalNoTax / 100;
-
                     //deduct disount amount from item net total
                     //Item.TotalNoTax -= DiscountAmt;
 
-                    // Find total tax amount from tax rate
-                    Item.TotalTax =
-                        Item.TotalNoTax * (Item.Tax.Rate) / 100;
+                    if (Item.InclusiveTax)
+                    {
+                        Item.TotalTax = Item.TotalNoTax * Item.Tax.Rate / 100;
 
-
+                    }
+                    else
+                    {
+                        // Find total tax amount from tax rate
+                        Item.TotalTax =
+                            (Item.TotalNoTax - DiscountAmt) * (Item.Tax.Rate) / 100;
+                    }
                     //calculate total amoount
                     Item.Total =
                         Item.TotalNoTax + Item.TotalTax;
 
                     /*
-                     *  Round to 2 decimal points
-                     *  Item.Total = Decimal.Round(Item.Total, 2);
-                     *  DiscountAmt = Decimal.Round(DiscountAmt, 2);
+                     *  Round to App.GetConfig("RoundOffValues") decimal points
+                     *  Item.Total = Decimal.Round(Item.Total, App.GetConfig("RoundOffValues"));
+                     *  DiscountAmt = Decimal.Round(DiscountAmt, App.GetConfig("RoundOffValues"));
                     */
                     //update invoice data
                     TotalDiscount += DiscountAmt;
                     NewInvoice.SubTotal += Item.TotalNoTax;
                     NewInvoice.TotalTax += Item.TotalTax;
 
-                    Item.Total = Decimal.Round(Item.Total, 2);
+                    Item.Total = Decimal.Round(Item.Total, Convert.ToInt16(App.GetConfig("RoundOffValues")));
                     //NewInvoice.SubTotal  -= NewInvoice.TotalTax;
                     // Re index slno after list reorder or update
                     Item.SlNo = index + 1;
@@ -536,11 +597,11 @@ namespace Kait.ViewModel
                 // Find Grant total
                 NewInvoice.Total = NewInvoice.SubTotal + NewInvoice.TotalTax - TotalDiscount  + NewInvoice.ShippingCharge;
                 
-                TotalDiscount = Decimal.Round(TotalDiscount,2);
+                TotalDiscount = Decimal.Round(TotalDiscount, Convert.ToInt16(App.GetConfig("RoundOffValues")));
                 NewInvoice.Discount =TotalDiscount;
-                NewInvoice.SubTotal = Decimal.Round(NewInvoice.SubTotal,2);
-                NewInvoice.Total = Decimal.Round(NewInvoice.Total,(RoundOffTotal)?0:2);
-                NewInvoice.TotalTax = Decimal.Round(NewInvoice.TotalTax,2);
+                NewInvoice.SubTotal = Decimal.Round(NewInvoice.SubTotal, Convert.ToInt16(App.GetConfig("RoundOffValues")));
+                NewInvoice.Total = Decimal.Round(NewInvoice.Total,(RoundOffTotal)?0: Convert.ToInt16(App.GetConfig("RoundOffValues")));
+                NewInvoice.TotalTax = Decimal.Round(NewInvoice.TotalTax, Convert.ToInt16(App.GetConfig("RoundOffValues")));
 
             }
             catch (OverflowException e)
@@ -735,7 +796,6 @@ namespace Kait.ViewModel
                         Amount=PayAmount,
                         Type=PayType
                     };
-                    SaveInvoiceTest(null);
                     return;
                 }
 
@@ -876,10 +936,13 @@ namespace Kait.ViewModel
 
         //Client Section
 
-        void InitializeClientSection() {
+        void InitializeClientSection(Client client = null) {
 
             Clients = new ObservableCollection<Client>((from c in App.DataProvider.Clients select c));
-            
+            if (client != null)
+            {
+                InvoiceClient = client;
+            }
         }
 
         private ObservableCollection<Client> _Clients;
@@ -903,6 +966,9 @@ namespace Kait.ViewModel
             set
             {
                 _InvoiceClient = value;
+                if (_InvoiceClient is null)
+                    _InvoiceClient = new Client();
+                NewClientName = _InvoiceClient.Name;
                 RaisePropertyChanged("InvoiceClient");
             }
 
@@ -915,7 +981,9 @@ namespace Kait.ViewModel
             get { return _IsBothAddressSame; }
             set {
                 _IsBothAddressSame = value;
-                if(value && InvoiceClient != null)
+                if (InvoiceClient != null)
+                    InvoiceClient = new Client();
+                if(value)
                 {
                     InvoiceClient.ShippingAddress = InvoiceClient.BillingAddress;
                     InvoiceClient.ShippingZIP = InvoiceClient.BillingZIP;
@@ -1016,19 +1084,36 @@ namespace Kait.ViewModel
 
         public void SaveInvoice(object obj)
         {
+            Invoice Invoice = NewInvoice.GetInvoice();
             //Sample Code for saving data to database
-            foreach (var invoice_product in AddedInvoiceProducts)
+            foreach (var invoice_product in Invoice.Products.ToList())
             {
-                NewInvoice.GetInvoice().Products.Add(invoice_product.GetInvoiceProducts());
+                if (!AddedInvoiceProducts.Where(x=>x.ProductId == invoice_product.ProductId).Any())
+                {
+                    Invoice.Products.Remove(invoice_product);
+                    App.DataProvider.InvoiceProducts.Remove(invoice_product);
+                    Console.WriteLine("Product:{0} Removed" ,invoice_product.Name);
+                }
             }
 
+            foreach (var invoice_product in AddedInvoiceProducts)
+            {
+                Invoice.Products.Add(invoice_product.GetInvoiceProducts());
+                Console.WriteLine("Product:{0} Added", invoice_product.Name);
+
+            }
+
+
             if (Payments != null)
-                NewInvoice.GetInvoice().Payments.Add(Payments);
-            NewInvoice.GetInvoice().Client = InvoiceClient;
-            App.DataProvider.Invoices.Add(NewInvoice.GetInvoice());
+                Invoice.Payments.Add(Payments);
+            if(InvoiceClient != null)
+                Invoice.Client = InvoiceClient;
+            if(!App.DataProvider.Invoices.Any(item=> item.InvoiceId==Invoice.InvoiceId))
+                App.DataProvider.Invoices.Add(Invoice);
             try
             {
                 App.DataProvider.SaveChanges();
+                
             }
             catch(Exception e)
             {
@@ -1036,6 +1121,7 @@ namespace Kait.ViewModel
                 Console.WriteLine("Error occured while updating database");
                 Console.WriteLine(e.StackTrace);
             }
+            
             /*
             NewInvoice = new InvoiceViewModel();
             AddedInvoiceProducts.Clear();

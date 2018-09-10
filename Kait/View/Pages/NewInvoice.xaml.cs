@@ -24,13 +24,20 @@ namespace Kait.View.Pages
     /// </summary>
     public partial class NewInvoice : Page
     {
-        private NewInvoiceViewModel VM=new NewInvoiceViewModel(DialogCoordinator.Instance);
-
+        private NewInvoiceViewModel VM = new NewInvoiceViewModel(DialogCoordinator.Instance);
+        
         public NewInvoice()
         {
             InitializeComponent();
             DataContext = VM;
-           
+
+        }
+
+        public NewInvoice(InvoiceViewModel invoice)
+        {
+            InitializeComponent();
+            DataContext = new NewInvoiceViewModel(DialogCoordinator.Instance,invoice);
+
         }
 
         //
@@ -74,6 +81,9 @@ namespace Kait.View.Pages
             (DataContext as NewInvoiceViewModel).SaveInvoiceCmd.Execute(null);
             GenerateItemRowsToPrintView();
             //temporary turn around for developing print preview
+            
+            Console.WriteLine("Column count with print preview table {0}",PrintDocumentProductTable.Columns.Count);
+            //PrintDocumentProductTable.Columns.ElementAt(1).Width = new GridLength(300);
             PrintInvoice();
         }
 
@@ -146,7 +156,7 @@ namespace Kait.View.Pages
 
             }
 
-            for (int i = 0; i < 10 - viewModel.AddedInvoiceProducts.Count; i++)
+            for (int i = 0; i < 12 - viewModel.AddedInvoiceProducts.Count; i++)
             {
                 ItemTableRowGroup.Rows.Add(CreateEmptyRow());
             }
@@ -208,7 +218,7 @@ namespace Kait.View.Pages
         TableRow BuildHeaderRow()
         {
             TableRow headerRow = new TableRow();
-            headerRow.Cells.Add(CreateTableCellWithText("NO",ApplyHeaderStyle));
+            headerRow.Cells.Add(CreateTableCellWithText("SL NO",ApplyHeaderStyle));
             headerRow.Cells.Add(CreateTableCellWithText("PRODUCT", ApplyHeaderStyle));
             headerRow.Cells.Add(CreateTableCellWithText("HSN", ApplyHeaderStyle));
             headerRow.Cells.Add(CreateTableCellWithText("QTY", ApplyHeaderStyle));
@@ -231,8 +241,8 @@ namespace Kait.View.Pages
             itemRow.Cells.Add(CreateTableCellWithText(item.Quantity.ToString(), ApplyItemCellStyle));
             itemRow.Cells.Add(CreateTableCellWithText(item.Price.ToString(), ApplyItemCellStyle, true));
             itemRow.Cells.Add(CreateTableCellWithText(item.Tax.Rate.ToString() + "%", ApplyItemCellStyle,false));
-            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax/2).ToString(), ApplyItemCellStyle,true));
-            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2).ToString(), ApplyItemCellStyle,true));
+            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax/2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle,true));
+            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle,true));
             itemRow.Cells.Add(CreateTableCellWithText(item.Total.ToString(), ApplyItemCellStyle,true));
             return itemRow;
 

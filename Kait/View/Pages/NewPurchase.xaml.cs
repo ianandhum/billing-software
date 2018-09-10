@@ -147,7 +147,7 @@ namespace Kait.View.Pages
 
             }
 
-            for (int i = 0; i < 10 - viewModel.AddedPurchaseProducts.Count; i++)
+            for (int i = 0; i < 12 - viewModel.AddedPurchaseProducts.Count; i++)
             {
                 ItemTableRowGroup.Rows.Add(CreateEmptyRow());
             }
@@ -232,8 +232,8 @@ namespace Kait.View.Pages
             itemRow.Cells.Add(CreateTableCellWithText(item.Quantity.ToString(), ApplyItemCellStyle));
             itemRow.Cells.Add(CreateTableCellWithText(item.Price.ToString(), ApplyItemCellStyle, true));
             itemRow.Cells.Add(CreateTableCellWithText(item.Tax.Rate.ToString() + "%", ApplyItemCellStyle, false));
-            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2).ToString(), ApplyItemCellStyle, true));
-            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2).ToString(), ApplyItemCellStyle, true));
+            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle, true));
+            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle, true));
             itemRow.Cells.Add(CreateTableCellWithText(item.Total.ToString(), ApplyItemCellStyle, true));
             return itemRow;
 

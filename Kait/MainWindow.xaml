@@ -31,8 +31,8 @@
         <DockPanel  Width="60"  Grid.Column="0" Grid.Row="1" Background="#273238"  x:Name="dockLeft" >
             <UI:NavigationButton IconImage="/Kait;component/View/Assets/reports.png"  Height="80" DockPanel.Dock="Top" BottomText="Reports"  />
             <UI:NavigationButton IconImage="/Kait;component/View/Assets/status.png"  Height="80"  DockPanel.Dock="Top" BottomText="Status"  />
-            <UI:NavigationButton IconImage="/Kait;component/View/Assets/logout.png"  Height="80" VerticalAlignment="Bottom"  DockPanel.Dock="Bottom" BottomText="Exit"  />
-            <UI:NavigationButton IconImage="/Kait;component/View/Assets/lock.png" VerticalAlignment="Bottom"  Height="80"  DockPanel.Dock="Bottom" BottomText="Lock"  Click="ExitApp" />
+            <UI:NavigationButton IconImage="/Kait;component/View/Assets/logout.png"  Height="80" VerticalAlignment="Bottom"  DockPanel.Dock="Bottom" BottomText="Exit"  Click="ExitApp" />
+            <UI:NavigationButton IconImage="/Kait;component/View/Assets/lock.png" VerticalAlignment="Bottom"  Height="80"  DockPanel.Dock="Bottom" BottomText="Lock"  />
         </DockPanel>
         <Frame x:Name="PageHost" Grid.Column="1" Grid.Row="0" Navigating="PART_Frame_Navigating"  Background="#fefefe"   NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.RowSpan="2"></Frame>
     </Grid>

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Kait.ViewModel;
+using Kait.ViewModel.Primitive;
+using Provider.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,8 +26,10 @@ namespace Kait.View.Pages
         public Home()
         {
             InitializeComponent();
+            DataContext = new HomeViewModel();
         }
 
+        
         private void NewInvoiceTrigger(object sender, EventArgs e)
         {
             MainWindow.PageHostService.Navigate(new NewInvoice());
@@ -33,6 +38,25 @@ namespace Kait.View.Pages
         private void NewPurchaseTrigger(object sender, EventArgs e)
         {
             MainWindow.PageHostService.Navigate(new NewPurchase());
+        }
+
+        private void ShowProductsView(object sender, EventArgs e)
+        {
+            MainWindow.PageHostService.Navigate(new ProductsView());
+        }
+
+        private void NaigateToInvoiceAll(object sender, EventArgs e)
+        {
+            //testing invoice preview
+            MainWindow.PageHostService.Navigate(
+                new NewInvoice(
+                    new InvoiceViewModel(
+                        App.DataProvider.Invoices.Where(
+                            x=>x.InvoiceId==140
+                        ).FirstOrDefault()
+                    )
+                 )
+            );
         }
     }
 }

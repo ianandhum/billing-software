@@ -65,7 +65,7 @@ namespace Kait
 
         private void ExitApp(object sender, EventArgs e)
         {
-            
+            Close();
         }
     }
 

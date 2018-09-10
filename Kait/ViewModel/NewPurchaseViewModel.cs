@@ -21,11 +21,11 @@ namespace Kait.ViewModel
         {
             InitializeViewModel();
             DialogCoordinator = iDialogCoordinator;
-
+            FreshPurchase = true;
         }
         private void InitializeViewModel()
         {
-            CurrentDate = DateTime.Now;
+            CurrentDate = DateTime.Today;
 
             string NextPurchaseId="1";
             try
@@ -37,6 +37,10 @@ namespace Kait.ViewModel
             {
 
                 Console.WriteLine(e.StackTrace);
+                
+            }
+            finally
+            {
                 MetaData = new MetaData(App.DataProvider)
                 {
 
@@ -47,7 +51,6 @@ namespace Kait.ViewModel
                         TypeOnPrint = App.GetConfig("FirstTypeOnPurchasePrint")
                     }
                 };
-                
             }
             
 
@@ -60,13 +63,39 @@ namespace Kait.ViewModel
             InitializePayments();
             InitializeVendorSection();
         }
+        private void InitializeViewModelWithPurchase(PurchaseViewModel purchase)
+        {
+            CurrentDate = DateTime.Today;
+            MetaData = new MetaData(App.DataProvider)
+            {
+
+                Purchase = new MetaData.PurchaseMeta()
+                {
+                    NextPurchaseId = purchase.PurchaseId.ToString(),
+                    Prefix = App.GetConfig("PurchasePrefix"),
+                    TypeOnPrint = App.GetConfig("FirstTypeOnPurchasePrint")
+                }
+            };
+            NewPurchase = purchase;
+            InitializeAddProductSection();
+            InitializePurchaseProducts(new ObservableCollection<PurchaseProducts>(purchase.GetPurchase().Products));
+            InitializePayments(purchase.GetPurchase().Payments.FirstOrDefault());
+            InitializeVendorSection(purchase.GetPurchase().Vendor);
+            PurchaseDataUpdated();
+        }
         void InitializeNavigation() {
             CurrentTab = 0;
         }
 
-        void InitializePayments()
+        void InitializePayments(PurchasePayments purchasePayment = null)
         {
-            Payments = new PurchasePayments();
+            PurchasePayments payments = new PurchasePayments();
+            if (purchasePayment != null)
+            {
+                payments = purchasePayment;
+
+            }
+            Payments = payments;
         }
         void InitializeAddProductSection()
         {
@@ -80,9 +109,18 @@ namespace Kait.ViewModel
             }
             IsProductListEmpty = true;
         }
-        void InitializePurchaseProducts()
+        void InitializePurchaseProducts(ObservableCollection<PurchaseProducts> IProducts = null)
         {
-            AddedPurchaseProducts = new ObservableCollection<PurchaseProductsViewModel>();
+
+            ObservableCollection<PurchaseProductsViewModel> purchaseProductsVMs = new ObservableCollection<PurchaseProductsViewModel>();
+            if (IProducts != null) foreach (var item in IProducts)
+                {
+                    purchaseProductsVMs.Add(new PurchaseProductsViewModel(item));
+                }
+
+            AddedPurchaseProducts = purchaseProductsVMs;
+            if (IProducts is null)
+                IsProductListEmpty = true;
             PaymentModes = Enum.GetValues(typeof(PaymentType)).Cast<PaymentType>();
 
         }
@@ -444,6 +482,9 @@ namespace Kait.ViewModel
             try
             {
                 AddedPurchaseProducts.Remove((PurchaseProductsViewModel)Item);
+                if (!FreshPurchase)
+                    App.DataProvider.InvoiceProducts.Remove(((InvoiceProductsViewModel)Item).GetInvoiceProducts());
+
                 PurchaseDataUpdated();
             }
             catch (InvalidCastException e)
@@ -492,12 +533,18 @@ namespace Kait.ViewModel
                 for (int index = 0; index < AddedPurchaseProducts.Count; index++)
                 {
                     PurchaseProductsViewModel Item = AddedPurchaseProducts.ElementAt(index);
-                    // TODO : Allow App Settings for precision (currently it is 2,hardcoded)
+                    // TODO : Allow App Settings for precision (currently it is App.GetConfig("RoundOffValues"),hardcoded)
+                    // TODO Resolved
                     Item.TotalNoTax = Item.Quantity * Item.Price;
+
+                    //calculate discount from discount percentage
+                    Decimal DiscountAmt =
+                        Item.DiscountPercent * Item.TotalNoTax / 100;
 
                     if (Item.InclusiveTax)
                     {
                         //calculate inclusive tax
+                        Item.TotalNoTax = Item.TotalNoTax - DiscountAmt;
                         Item.TotalNoTax = Item.TotalNoTax / ((Item.Tax.Rate / 100) + 1);
                     }
 
@@ -506,33 +553,35 @@ namespace Kait.ViewModel
                         Item.IsDiscount = true;
                     }
 
-                    //calculate discount from discount percentage
-                    Decimal DiscountAmt =
-                        Item.DiscountPercent * Item.TotalNoTax / 100;
-
                     //deduct disount amount from item net total
                     //Item.TotalNoTax -= DiscountAmt;
 
-                    // Find total tax amount from tax rate
-                    Item.TotalTax =
-                        Item.TotalNoTax * (Item.Tax.Rate) / 100;
+                    if (Item.InclusiveTax)
+                    {
+                        Item.TotalTax = Item.TotalNoTax * Item.Tax.Rate / 100;
 
-
+                    }
+                    else
+                    {
+                        // Find total tax amount from tax rate
+                        Item.TotalTax =
+                            (Item.TotalNoTax - DiscountAmt) * (Item.Tax.Rate) / 100;
+                    }
                     //calculate total amoount
                     Item.Total =
                         Item.TotalNoTax + Item.TotalTax;
 
                     /*
-                     *  Round to 2 decimal points
-                     *  Item.Total = Decimal.Round(Item.Total, 2);
-                     *  DiscountAmt = Decimal.Round(DiscountAmt, 2);
+                     *  Round to App.GetConfig("RoundOffValues") decimal points
+                     *  Item.Total = Decimal.Round(Item.Total, App.GetConfig("RoundOffValues"));
+                     *  DiscountAmt = Decimal.Round(DiscountAmt, App.GetConfig("RoundOffValues"));
                     */
                     //update Purchase data
                     TotalDiscount += DiscountAmt;
                     NewPurchase.SubTotal += Item.TotalNoTax;
                     NewPurchase.TotalTax += Item.TotalTax;
-
-                    Item.Total = Decimal.Round(Item.Total, 2);
+                    
+                    Item.Total = Decimal.Round(Item.Total, StrToInt( App.GetConfig("RoundOffValues") ));
                     //NewPurchase.SubTotal  -= NewPurchase.TotalTax;
                     // Re index slno after list reorder or update
                     Item.SlNo = index + 1;
@@ -540,12 +589,12 @@ namespace Kait.ViewModel
                 }
                 // Find Grant total
                 NewPurchase.Total = NewPurchase.SubTotal + NewPurchase.TotalTax - TotalDiscount;
-                
-                TotalDiscount = Decimal.Round(TotalDiscount,2);
+                NewPurchase.Total += NewPurchase.ShippingCharge;
+                TotalDiscount = Decimal.Round(TotalDiscount, StrToInt(App.GetConfig("RoundOffValues")));
                 NewPurchase.Discount =TotalDiscount;
-                NewPurchase.SubTotal = Decimal.Round(NewPurchase.SubTotal,2);
-                NewPurchase.Total = Decimal.Round(NewPurchase.Total,(RoundOffTotal)?0:2);
-                NewPurchase.TotalTax = Decimal.Round(NewPurchase.TotalTax,2);
+                NewPurchase.SubTotal = Decimal.Round(NewPurchase.SubTotal, StrToInt(App.GetConfig("RoundOffValues")));
+                NewPurchase.Total = Decimal.Round(NewPurchase.Total, (RoundOffTotal)?0:StrToInt(App.GetConfig("RoundOffValues")));
+                NewPurchase.TotalTax = Decimal.Round(NewPurchase.TotalTax, StrToInt(App.GetConfig("RoundOffValues")));
 
             }
             catch (OverflowException e)
@@ -554,6 +603,29 @@ namespace Kait.ViewModel
                 Console.WriteLine(e.StackTrace);
             }
 
+        }
+
+        private int StrToInt(string value)
+        {
+            int result = 0;
+            try
+            {
+                result = int.Parse(value);
+
+            }
+            catch (FormatException e)
+            {
+                Console.WriteLine(e);
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine(e);
+            }
+            catch(OverflowException e)
+            {
+                Console.WriteLine(e);
+            }
+            return result;
         }
 
         /*
@@ -681,7 +753,30 @@ namespace Kait.ViewModel
             }
         }
 
-        
+        private bool _ShippingChargeTrigger { get; set; }
+        public bool ShippingChargeTrigger
+        {
+            get
+            {
+                return _ShippingChargeTrigger;
+            }
+            set
+            {
+
+                _ShippingChargeTrigger = value;
+                if (value)
+                {
+                    IsAddShippingChargeOpen = true;
+                }
+                else
+                {
+                    NewPurchase.ShippingCharge = 0;
+                    PurchaseDataUpdated();
+                }
+                RaisePropertyChanged("ShippingChargeTrigger");
+            }
+        }
+
 
         // Commands For ChildWindows
 
@@ -714,11 +809,10 @@ namespace Kait.ViewModel
                 {
                     Payments.Payment = new Payment()
                     {
-                        Flow=CashFlow.Inflow,
+                        Flow=CashFlow.Outflow,
                         Amount=PayAmount,
                         Type=PayType
                     };
-                    SavePurchaseTest(null);
                     return;
                 }
 
@@ -789,7 +883,42 @@ namespace Kait.ViewModel
             DiscountAll = 0;
             DiscountAllTrigger = false;
         }
-        
+
+        private ICommand _ShippingChargeCmd;
+        public ICommand ShippingChargeCmd
+        {
+            get
+            {
+                if (_ShippingChargeCmd == null)
+                    _ShippingChargeCmd = new RunCommand(AddShippingCharge);
+                return _ShippingChargeCmd;
+            }
+            set
+            {
+                _ShippingChargeCmd = value;
+            }
+
+        }
+        private void AddShippingCharge(object obj)
+        {
+
+            IsAddShippingChargeOpen = false;
+            if (obj != null && (Boolean)obj)
+            {
+                //Shipping and packaging charge added if obj is true
+                if (NewPurchase.ShippingCharge > 0)
+                {
+                    PurchaseDataUpdated();
+                    return;
+                }
+
+            }
+            NewPurchase.ShippingCharge = 0;
+
+            //if noop
+            ShippingChargeTrigger = false;
+        }
+
 
         //Save updation to productitem
         private ICommand _SaveEditsProductCmd;
@@ -824,10 +953,14 @@ namespace Kait.ViewModel
 
         //Vendor Section
 
-        void InitializeVendorSection() {
+        void InitializeVendorSection(Vendor client = null)
+        {
 
             Vendors = new ObservableCollection<Vendor>((from c in App.DataProvider.Vendors select c));
-            
+            if (client != null)
+            {
+                PurchaseVendor = client;
+            }
         }
 
         private ObservableCollection<Vendor> _Vendors;
@@ -851,6 +984,7 @@ namespace Kait.ViewModel
             set
             {
                 _PurchaseVendor = value;
+                NewVendorName = _PurchaseVendor.Name;
                 RaisePropertyChanged("PurchaseVendor");
             }
 
@@ -863,7 +997,9 @@ namespace Kait.ViewModel
             get { return _IsBothAddressSame; }
             set {
                 _IsBothAddressSame = value;
-                if(value && PurchaseVendor != null)
+                if (PurchaseVendor != null)
+                    PurchaseVendor = new Vendor();
+                if (value)
                 {
                     PurchaseVendor.ShippingAddress = PurchaseVendor.BillingAddress;
                     PurchaseVendor.ShippingZIP = PurchaseVendor.BillingZIP;
@@ -960,33 +1096,36 @@ namespace Kait.ViewModel
             }
 
         }
-        
+
+        public bool FreshPurchase { get; private set; }
 
         public void SavePurchase(object obj)
         {
+            Purchase Purchase = NewPurchase.GetPurchase();
             //Sample Code for saving data to database
-            foreach (var Purchase_product in AddedPurchaseProducts)
+            
+            foreach (var purchase_product in AddedPurchaseProducts)
             {
-                NewPurchase.GetPurchase().Products.Add(Purchase_product.GetPurchaseProducts());
+                Purchase.Products.Add(purchase_product.GetPurchaseProducts());
             }
 
+
             if (Payments != null)
-                NewPurchase.GetPurchase().Payments.Add(Payments);
-            NewPurchase.GetPurchase().Vendor = PurchaseVendor;
-            App.DataProvider.Purchases.Add(NewPurchase.GetPurchase());
-
-            //TODO Catch Inner Exceptions too
-
-            //try
-            //{
+                Purchase.Payments.Add(Payments);
+            if (PurchaseVendor != null)
+                Purchase.Vendor = PurchaseVendor;
+            if (!App.DataProvider.Purchases.Any(item => item.PurchaseId == Purchase.PurchaseId))
+                App.DataProvider.Purchases.Add(Purchase);
+            try
+            {
                 App.DataProvider.SaveChanges();
-            //}
-            //catch(Exception e)
-            //{
-                //DialogCoordinator.ShowMessageAsync(this, "Error Occured", "Error occured while saving Purchase\n"+e.Message,MessageDialogStyle.Affirmative);
-                //Console.WriteLine("Error occured while updating database");
-                //Console.WriteLine(e.StackTrace);
-            //}
+            }
+            catch (Exception e)
+            {
+                DialogCoordinator.ShowMessageAsync(this, "Error Occured", "Error occured while saving purchase\n" + e.Message, MessageDialogStyle.Affirmative);
+                Console.WriteLine("Error occured while updating database");
+                Console.WriteLine(e.StackTrace);
+            }
             /*
             NewPurchase = new PurchaseViewModel();
             AddedPurchaseProducts.Clear();

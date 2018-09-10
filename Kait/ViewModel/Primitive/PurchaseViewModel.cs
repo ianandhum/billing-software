@@ -135,7 +135,17 @@ namespace Kait.ViewModel.Primitive
             }
         }
 
-        
+
+        public Decimal ShippingCharge
+        {
+            get { return Purchase.ShippingCharge; }
+            set
+            {
+                Purchase.ShippingCharge = value;
+                RaisePropertyChanged("ShippingCharge");
+            }
+        }
+
         public bool Cancelled
         {
             get { return Purchase.Cancelled; }

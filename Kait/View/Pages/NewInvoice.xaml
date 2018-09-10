@@ -25,31 +25,9 @@
         <DataTemplate x:Key="tabHeader">
             <Rectangle Visibility="Hidden"></Rectangle>
         </DataTemplate>
-        <Style x:Key="clientLabelStyle" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-        <Style x:Key="LabelTitle" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="#000"/>
-            <Setter Property="FontSize" Value="25"/>
-            <Setter Property="Margin" Value="50"/>
-            <Setter Property="FontWeight" Value="Light"/>
-        </Style>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-        <Support:PrependStrConverter x:Key="PrependStrConverter"/>
-        <Support:AppendStrConverter x:Key="AppendStrConverter"/>
-        <Support:BoolInverter x:Key="BoolInverter"/>
         <system:Int16 x:Key="ItemPage">0</system:Int16>
         <system:Int16 x:Key="ClientPage">1</system:Int16>
         <system:Int16 x:Key="PrintPage">2</system:Int16>
-        <system:String x:Key="RupeeSign">₹</system:String>
-        <system:String x:Key="PercentSign">%</system:String>
-        <system:Boolean x:Key="False">false</system:Boolean>
-        <system:Boolean x:Key="True">true</system:Boolean>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -63,7 +41,7 @@
             <Label VerticalAlignment="Stretch"  Width="200" HorizontalAlignment="Left" VerticalContentAlignment="Center" FontSize="16" FontWeight="Bold" FontFamily="sans-serif" Content="New Invoice"/>
             <StackPanel Width="317" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0">
                 <Label VerticalAlignment="Stretch"    HorizontalContentAlignment="Right" FontSize="12"  FontFamily="sans-serif" Content="Kait Electricals"/>
-                <Label VerticalAlignment="Stretch"     HorizontalContentAlignment="Right" FontSize="10"  FontFamily="sans-serif" Content="{Binding CurrentDate,StringFormat='{}{0:MMM dd yyyy}'}"/>
+                <Label VerticalAlignment="Stretch"     HorizontalContentAlignment="Right" FontSize="10"  FontFamily="sans-serif" Content="{Binding CurrentDate,StringFormat='{}{0: MMM dd yyyy}'}"/>
 
             </StackPanel>
         </DockPanel>
@@ -164,10 +142,22 @@
                                     <DataGridTemplateColumn MinWidth="150" Header="Action" >
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                                    <Button Margin="5" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.EditProductCmd}"  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.SelectedProductItem}">edit</Button>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button ToolTip="Edit this product" Style="{DynamicResource ResourceKey=MetroCircleButtonStyle}"  Height="45" Width="45" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.EditProductCmd}"  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.SelectedProductItem}">
+                                                        <Rectangle Width="15" Height="15" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                                                            <Rectangle.OpacityMask>
+                                                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_edit}" />
+                                                            </Rectangle.OpacityMask>
+                                                        </Rectangle>
+                                                    </Button>
                                                     <!--Remove selected item from products-->
-                                                    <Button Margin="5"  Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.RmProductCmd}"  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.SelectedProductItem}">remove</Button>
+                                                    <Button ToolTip="Remove this product" Style="{DynamicResource ResourceKey=MetroCircleButtonStyle}"  Height="45" Width="45"  Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.RmProductCmd}"  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.SelectedProductItem}">
+                                                        <Rectangle Width="13" Height="17" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                                                            <Rectangle.OpacityMask>
+                                                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
+                                                            </Rectangle.OpacityMask>
+                                                        </Rectangle>
+                                                    </Button>
                                                 </StackPanel>
 
                                             </DataTemplate>
@@ -436,11 +426,15 @@
                                                                 </Span>
                                                                 <LineBreak></LineBreak>
                                                                 <Span>
-                                                                    <Run Text="{Binding Path=InvoiceClient.BillingZIP,StringFormat={}PIN:{0}}"/>
+                                                                    <Run Text="{Binding Path=InvoiceClient.BillingZIP,StringFormat={}PIN  {0}}"/>
                                                                 </Span>
                                                                 <LineBreak/>
                                                                 <Span>
                                                                     <Run Text="{Binding Path=InvoiceClient.BillingCity}"/>
+                                                                </Span>
+                                                                <LineBreak/>
+                                                                <Span>
+                                                                    <Run Text="{Binding Path=InvoiceClient.GSTIN , StringFormat={}GSTIN  {0}}"/>
                                                                 </Span>
                                                             </Paragraph>
                                                         </TableCell>
@@ -506,22 +500,19 @@
                                                         <TableCell Padding="0,10" >
                                                             <Paragraph FontSize="15" TextAlignment="Right">
                                                                 <Span>
-                                                                    TOTAL BEFORE TAX
+                                                                    Total Before Tax
                                                                 </Span>
-                                                                <LineBreak/>
                                                                 <LineBreak/>
                                                                 <Span>
-                                                                    DISCOUNT
+                                                                    Discount
                                                                 </Span>
-                                                                <LineBreak/>
                                                                 <LineBreak/>
                                                                 <Span>
-                                                                    TOTAL TAX AMOUNT
+                                                                    Total Tax Amount
                                                                 </Span>
-                                                                <LineBreak/>
                                                                 <LineBreak/>
                                                                 <Span FontWeight="Bold" FontSize="18">
-                                                                    TOTAL AMOUNT
+                                                                    GRANT TOTAL
                                                                 </Span>
                                                                 <!--
                                                                 <LineBreak/>
@@ -537,16 +528,13 @@
                                                                     ₹<Run Text="{Binding Path=NewInvoice.SubTotal}"/>
                                                                 </Bold>
                                                                 <LineBreak/>
-                                                                <LineBreak/>
                                                                 <Bold>
                                                                     ₹<Run Text="{Binding Path=NewInvoice.Discount}"/>
                                                                 </Bold>
                                                                 <LineBreak/>
-                                                                <LineBreak/>
                                                                 <Bold>
                                                                     ₹<Run Text="{Binding Path=NewInvoice.TotalTax}"/>
                                                                 </Bold>
-                                                                <LineBreak/>
                                                                 <LineBreak/>
                                                                 <Bold FontSize="18">
                                                                     ₹<Run Text="{Binding Path=NewInvoice.Total}"/>
