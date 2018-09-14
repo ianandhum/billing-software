@@ -14,7 +14,7 @@ namespace Kait.ViewModel
     {
         public ProductsViewModel()
         {
-            ProductsList = new ObservableCollection<Product>(App.DataProvider.Products.ToList());
+            ProductsList = new ObservableCollection<Product>(App.DataProvider.Products.AsEnumerable());
             ProductsList.CollectionChanged +=TrackChange;
             CurrentDate = DateTime.Today;
             Taxes = App.DataProvider.Taxes.ToList();
@@ -102,6 +102,90 @@ namespace Kait.ViewModel
             {
 
                 EditMode = false;
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+
+        private Product _NewProductItem { get; set; }
+        public Product NewProductItem
+        {
+            get
+            {
+                return _NewProductItem;
+            }
+            set
+            {
+
+                _NewProductItem = value;
+                RaisePropertyChanged("NewProductItem");
+            }
+        }
+
+        private bool _IsNewProductItemOpen { get; set; }
+        public bool IsNewProductItemOpen
+        {
+            get
+            {
+                return _IsNewProductItemOpen;
+            }
+            set
+            {
+                _IsNewProductItemOpen = value;
+                RaisePropertyChanged("IsNewProductItemOpen");
+            }
+        }
+
+
+
+        private ICommand _AddProductCmd;
+        public ICommand AddProductCmd
+        {
+            get
+            {
+                if (_AddProductCmd == null)
+                    _AddProductCmd = new RunCommand(AddProductItem);
+                return _AddProductCmd;
+            }
+            set
+            {
+                _AddProductCmd = value;
+            }
+
+        }
+
+        private void AddProductItem(object obj)
+        {
+            try
+            {
+                //save new product
+                if ((bool)obj)
+                {
+                    if (NewProductItem != null)
+                    {
+                        App.DataProvider.Products.Add(NewProductItem);
+                        if (App.DataProvider.SaveChanges()==1)
+                        {
+                            ProductsList = new ObservableCollection<Product>(App.DataProvider.Products.AsEnumerable());
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error Saving Data to ProductList");
+                        }
+                        IsNewProductItemOpen = false;
+                    }
+                }
+                // if mode is show new product layout
+                else
+                {
+                    NewProductItem = new Product();
+                    IsNewProductItemOpen = true;
+                }
+            }
+            catch (InvalidCastException e)
+            {
+
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
             }

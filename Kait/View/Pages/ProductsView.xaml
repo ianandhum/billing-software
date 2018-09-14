@@ -65,7 +65,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="5" Margin="8,20">
                             <TextBlock Height="27"/>
-                            <Button Padding="9" HorizontalAlignment="Right"  Style="{DynamicResource AccentedSquareButtonStyle}" Content="add new product" Command="{Binding Path=AddProductCmd}"/>
+                            <Button Padding="9" HorizontalAlignment="Right"  Style="{DynamicResource AccentedSquareButtonStyle}" Content="add new product" Command="{Binding Path=AddProductCmd}" CommandParameter="{StaticResource False}"/>
                         </StackPanel>
 
                     </Grid>
@@ -203,6 +203,65 @@
                             <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Inclusive Tax</Label>
                             <CheckBox Grid.Row="6" Grid.Column="1" Margin="10" HorizontalAlignment="Left" IsChecked="{Binding Path=SelectedProductItem.TaxIncluded}"  IsEnabled="{Binding Path=EditMode}"></CheckBox>
                             <Button Grid.Row="7" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=SaveEditsProductCmd}" Content="{Binding PrimaryElementContent}"></Button>
+
+                        </Grid>
+                    </StackPanel>
+                </SimpleChildWindow:ChildWindow>
+                <SimpleChildWindow:ChildWindow
+                               Title="Add New Product"
+                               Padding="15"
+                               ChildWindowWidth="600"
+                               ShowCloseButton="True"
+                               IsOpen="{Binding Path=IsNewProductItemOpen,Mode=TwoWay}"
+                               >
+
+                    <SimpleChildWindow:ChildWindow.OverlayBrush>
+                        <SolidColorBrush Opacity="0.7" Color="Black" />
+
+                    </SimpleChildWindow:ChildWindow.OverlayBrush>
+
+                    <StackPanel Margin="20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="7*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Product Name</Label>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="10" Text="{Binding Path=NewProductItem.Name,Mode=TwoWay}"></TextBox>
+                            <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource clientLabelStyle}"  Margin="10" >Measuring Unit</Label>
+                            <ComboBox Grid.Row="1" Grid.Column="1" Margin="10" ItemsSource="{Binding Path=MeasureTypes}" SelectedValue="{Binding Path=NewProductItem.MU}" ></ComboBox>
+                            <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Description</Label>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="10" Height="100" Text="{Binding Path=NewProductItem.Description}"></TextBox>
+                            <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Price</Label>
+                            <Controls:NumericUpDown Grid.Row="3" Grid.Column="1" Margin="10" HorizontalContentAlignment="Left"  Value="{Binding Path=NewProductItem.Price}"/>
+                            <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Tax Rate</Label>
+                            <Grid Grid.Row="4" Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox Grid.Column="0" Margin="10" MinHeight="30"  HorizontalContentAlignment="Left" ItemsSource="{Binding Path=Taxes}" SelectedItem="{Binding NewProductItem.Taxes}" DisplayMemberPath="Rate"/>
+                                <Label Grid.Column="1" Style="{StaticResource clientLabelStyle}" BorderThickness="1,1,1,1" Content="%">
+                                    <Label.BorderBrush>
+                                        <SolidColorBrush Color="#ccc"/>
+                                    </Label.BorderBrush>
+                                </Label>
+                            </Grid>
+                            <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">HSN</Label>
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="10" Text="{Binding Path=NewProductItem.HSN}"></TextBox>
+                            <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource clientLabelStyle}" Margin="10">Inclusive Tax</Label>
+                            <CheckBox Grid.Row="6" Grid.Column="1" Margin="10" HorizontalAlignment="Left" IsChecked="{Binding Path=NewProductItem.TaxIncluded}"></CheckBox>
+                            <Button Grid.Row="7" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=AddProductCmd}"  CommandParameter="{StaticResource True}" Content="Add Product"></Button>
 
                         </Grid>
                     </StackPanel>
