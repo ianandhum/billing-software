@@ -212,7 +212,7 @@ namespace Kait.ViewModel.Primitive
             set
             {
                 InvoiceProducts.Tax = value;
-                RaisePropertyChanged("CESSPercent");
+                RaisePropertyChanged("Tax");
             }
 
         }

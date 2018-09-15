@@ -58,5 +58,21 @@ namespace Kait.View.Pages
                  )
             );
         }
+        
+
+        private void NaigateToPurchaseOrder(object sender, EventArgs e)
+        {
+            //testing invoice preview
+            MainWindow.PageHostService.Navigate(
+                new NewPurchase(
+                    new PurchaseViewModel(
+                        App.DataProvider.Purchases.Where(
+                            x => x.PurchaseId == 24
+                        ).FirstOrDefault()
+                    )
+                 )
+            );
+        }
     }
+
 }

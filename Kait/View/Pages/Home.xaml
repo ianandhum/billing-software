@@ -37,7 +37,7 @@
             <UI:HomeButton Grid.Column="0" Grid.Row="1" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/new-invoice.png" Handler="NewInvoiceTrigger"></UI:HomeButton>
             <UI:HomeButton Grid.Column="1" Grid.Row="1" Heading="New Purchase Order" SubHeading="Purchase Stock from vendor" Source="/Kait;component/View/Assets/receipt.png" Handler="NewPurchaseTrigger"></UI:HomeButton>
             <UI:HomeButton  Grid.Column="2" Grid.Row="1" Heading="Stock Information" SubHeading="Add new estimate receipt" Source="/Kait;component/View/Assets/new-purchase.png"></UI:HomeButton>
-            <UI:HomeButton Grid.Column="0" Grid.Row="2" Heading="Accounts" SubHeading="Manage client/vendors" Source="/Kait;component/View/Assets/accounts.png"></UI:HomeButton>
+            <UI:HomeButton Grid.Column="0" Grid.Row="2" Heading="Accounts" SubHeading="Manage client/vendors" Source="/Kait;component/View/Assets/accounts.png"  Handler="NaigateToPurchaseOrder"></UI:HomeButton>
             <UI:HomeButton Grid.Column="1" Grid.Row="2" Heading="Products" SubHeading="Manage Products/items" Source="/Kait;component/View/Assets/product.png" Handler="ShowProductsView"></UI:HomeButton>
             <UI:HomeButton  Grid.Column="2" Grid.Row="2" Heading="GST Returns" SubHeading="Generate reports" Source="/Kait;component/View/Assets/returns-gst.png"></UI:HomeButton>
             <UI:HomeButton Grid.Column="3" Grid.Row="1" Heading="Payment/Cash Receipt" SubHeading="Manage Products/items" Source="/Kait;component/View/Assets/product.png" Handler="NaigateToInvoiceAll"></UI:HomeButton>

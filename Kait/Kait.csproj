@@ -97,7 +97,6 @@
     </ApplicationDefinition>
     <Compile Include="BusinessLogic\ComputeInvoice.cs" />
     <Compile Include="BusinessLogic\PrintBillBase.cs" />
-    <Compile Include="Startup.cs" />
     <Compile Include="Support\AppendStrConverter.cs" />
     <Compile Include="Support\BoolInverter.cs" />
     <Compile Include="Support\PrependStrConverter.cs" />

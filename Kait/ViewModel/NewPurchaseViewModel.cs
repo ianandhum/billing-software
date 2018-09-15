@@ -23,6 +23,12 @@ namespace Kait.ViewModel
             DialogCoordinator = iDialogCoordinator;
             FreshPurchase = true;
         }
+        public NewPurchaseViewModel(IDialogCoordinator iDialogCoordinator,PurchaseViewModel purchase)
+        {
+            InitializeViewModelWithPurchase(purchase);
+            DialogCoordinator = iDialogCoordinator;
+            FreshPurchase = false;
+        }
         private void InitializeViewModel()
         {
             CurrentDate = DateTime.Today;

@@ -33,6 +33,14 @@ namespace Kait.View.Pages
 
         }
 
+        public NewPurchase(PurchaseViewModel invoice)
+        {
+            InitializeComponent();
+            DataContext = new NewPurchaseViewModel(DialogCoordinator.Instance, invoice);
+
+        }
+
+
         //
         //Control members
         //
