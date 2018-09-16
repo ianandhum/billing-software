@@ -33,10 +33,10 @@ namespace Kait.View.Pages
 
         }
 
-        public NewPurchase(PurchaseViewModel invoice)
+        public NewPurchase(PurchaseViewModel purchase)
         {
             InitializeComponent();
-            DataContext = new NewPurchaseViewModel(DialogCoordinator.Instance, invoice);
+            DataContext = new NewPurchaseViewModel(DialogCoordinator.Instance, purchase);
 
         }
 
