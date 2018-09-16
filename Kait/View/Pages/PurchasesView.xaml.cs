@@ -16,12 +16,13 @@ using System.Windows.Shapes;
 namespace Kait.View.Pages
 {
     /// <summary>
-    /// Interaction logic for ProductsView.xaml
+    /// Interaction logic for PurchasesView.xaml
     /// </summary>
-    public partial class ProductsView : Page
+    public partial class PurchasesView : Page
     {
-        private ProductsViewModel viewModel = new ProductsViewModel();
-        public ProductsView()
+        private PurchasesViewModel viewModel = new PurchasesViewModel();
+
+        public PurchasesView()
         {
             InitializeComponent();
             DataContext = viewModel;
@@ -30,7 +31,7 @@ namespace Kait.View.Pages
         private void SearchKey_Hit(object sender, KeyEventArgs e)
         {
             // Not Working
-            if(e.Key == Key.Return)
+            if (e.Key == Key.Return)
                 (viewModel).SearchCmd.Execute(null);
         }
     }

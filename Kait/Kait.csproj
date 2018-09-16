@@ -109,9 +109,14 @@
     <Compile Include="ViewModel\NewInvoiceViewModel.cs" />
     <Compile Include="ViewModel\Primitive\PurchaseViewModel.cs" />
     <Compile Include="ViewModel\Primitive\InvoiceViewModel.cs" />
+    <Compile Include="ViewModel\InvoicesViewModel.cs" />
     <Compile Include="ViewModel\ProductsViewModel.cs" />
+    <Compile Include="ViewModel\PurchasesViewModel.cs" />
     <Compile Include="View\Pages\Home.xaml.cs">
       <DependentUpon>Home.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\InvoicesView.xaml.cs">
+      <DependentUpon>InvoicesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\NewInvoice.xaml.cs">
       <DependentUpon>NewInvoice.xaml</DependentUpon>
@@ -121,6 +126,9 @@
     </Compile>
     <Compile Include="View\Pages\ProductsView.xaml.cs">
       <DependentUpon>ProductsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Pages\PurchasesView.xaml.cs">
+      <DependentUpon>PurchasesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UI\ComboBox.xaml.cs" />
     <Compile Include="View\UI\HomeButton.xaml.cs">
@@ -153,6 +161,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Pages\InvoicesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Pages\NewInvoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -164,6 +176,10 @@
     <Page Include="View\Pages\ProductsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\PurchasesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\UI\Colors.xaml">
       <Generator>MSBuild:Compile</Generator>

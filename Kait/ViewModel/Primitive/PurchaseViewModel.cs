@@ -14,6 +14,7 @@ namespace Kait.ViewModel.Primitive
         }
         public PurchaseViewModel(Purchase purchase)
         {
+
             Purchase = purchase;
 
         }

@@ -51,13 +51,16 @@
                         <Label Padding="0,20" Grid.Row="0" Grid.ColumnSpan="6" HorizontalContentAlignment="Center" FontSize="24">Filter products</Label>
                         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Margin="8,20">
                             <Label Height="28" Foreground="#000" FontWeight="Medium"  Content="Search For" TabIndex="-1"/>
-                            <TextBox Padding="5"  FontWeight="SemiBold" HorizontalContentAlignment="Left" Text="{Binding Path=Discount,Mode=TwoWay}"  />
+                            <TextBox Padding="5"  FontWeight="SemiBold" HorizontalContentAlignment="Left" Text="{Binding Path=SearchKey,Mode=TwoWay}" KeyUp="SearchKey_Hit">
+                                
+                                
+                            </TextBox>
                         </StackPanel>
 
 
                         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Margin="8,20">
                             <Label  Height="28" Foreground="#000"  FontWeight="Medium" Content="Search By"/>
-                            <ComboBox Padding="8" FontWeight="SemiBold" ItemsSource="{Binding Path=Filters}" SelectedItem="{Binding Path=SelectedFilter,Mode=TwoWay}" DisplayMemberPath="Name"/>
+                            <ComboBox Padding="8" FontWeight="SemiBold" ItemsSource="{Binding Path=Filters}" SelectedItem="{Binding Path=SearchFilter,Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="3" Margin="8,20">
                             <TextBlock Height="27"/>

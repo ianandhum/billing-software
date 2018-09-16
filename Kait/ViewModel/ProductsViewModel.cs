@@ -1,10 +1,12 @@
 ﻿using Kait.Support;
+using Kait.View.Pages;
 using Provider.Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Windows.Input;
 
@@ -19,6 +21,9 @@ namespace Kait.ViewModel
             CurrentDate = DateTime.Today;
             Taxes = App.DataProvider.Taxes.ToList();
             MeasureTypes = Enum.GetValues(typeof(Measure)).Cast<Measure>();
+
+            // initialize search filters in search section
+            InitFilters();
         }
 
         private DateTime _CurrentDate { get; set; }
@@ -289,7 +294,9 @@ namespace Kait.ViewModel
 
         public void TrackChange(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (ProductsList.Count == 0)
+
+
+            if (ProductsList!=null && ProductsList.Count == 0)
             {
                 IsProductListEmpty = true;
             }
@@ -323,6 +330,113 @@ namespace Kait.ViewModel
                 _PrimaryElementContent = value;
                 RaisePropertyChanged("PrimaryElementContent");
             }
+        }
+
+
+
+        private string _SearchKey { get; set; }
+        public string SearchKey
+        {
+            get
+            {
+                return _SearchKey;
+            }
+            set
+            {
+
+                _SearchKey = value;
+                RaisePropertyChanged("SearchKey");
+            }
+        }
+
+        private string _SearchFilter { get; set; }
+        public string SearchFilter
+        {
+            get
+            {
+                return _SearchFilter;
+            }
+            set
+            {
+
+                _SearchFilter = value;
+                RaisePropertyChanged("SearchFilter");
+            }
+        }
+
+        
+
+        //Search Section
+
+        public static List<string> Filters { get; private set; }
+
+        public void InitFilters()
+        {
+            Filters = new List<string>();
+            Filters.Add("All");
+            Filters.Add("Name");
+            Filters.Add("Description");
+            Filters.Add("HSN");
+            SearchFilter = Filters[0];
+        }
+
+        public static Expression<Func<Product,bool>> FindProducts( string key, string type)
+        {
+
+            //CODE_CLEANUP: the return type should always be a valid Linq expression this makes code readablity sucking
+
+
+            //show all if empty
+            if(key == "" || key == null )
+            {
+                return (product => true);
+            }
+
+            switch (type)
+            {
+                case "Name":
+                    return (product=>product.Name.ToLower().Contains(key.ToLower()));
+                case "Description":
+                    return (product=>product.Description.ToLower().Contains(key.ToLower()));
+                case "HSN":
+                    return (product=>product.HSN.ToLower().Contains(key.ToLower()));
+                case "All":
+                    return (product => product.HSN.ToLower().Contains(key.ToLower()) || 
+                    
+                                       product.Name.ToLower().Contains(key.ToLower()) || 
+                                       
+                                       product.Price.ToString().ToLower().Contains(key.ToLower()) || 
+                                       
+                                       product.Description.ToLower().Contains(key.ToLower())
+                          );
+                default:
+                    return (product=>true);
+            }
+        }
+        private ICommand _SearchCmd;
+        public ICommand SearchCmd
+        {
+            get
+            {
+                if (_SearchCmd == null)
+                    _SearchCmd = new RunCommand(SearchProduct);
+                return _SearchCmd;
+            }
+            set
+            {
+                _SearchCmd = value;
+            }
+
+        }
+        private void SearchProduct(object Item)
+        {
+            ProductsList = null;
+            //BUG:Exception NotSupportedException: Reason Direct Call to FindProducts function is not possible 
+
+            ProductsList = new ObservableCollection<Product>(
+                     App.DataProvider.Products.Where(FindProducts(SearchKey,SearchFilter))
+                 );
+           
         }
 
     }

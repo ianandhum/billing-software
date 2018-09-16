@@ -25,6 +25,7 @@ namespace Kait.View.Pages
     public partial class NewPurchase : Page
     {
         private NewPurchaseViewModel VM = new NewPurchaseViewModel(DialogCoordinator.Instance);
+        private NewPurchaseViewModel VMWithItem;
 
         public NewPurchase()
         {
@@ -35,8 +36,9 @@ namespace Kait.View.Pages
 
         public NewPurchase(PurchaseViewModel purchase)
         {
+            VMWithItem = new NewPurchaseViewModel(DialogCoordinator.Instance, purchase);
             InitializeComponent();
-            DataContext = new NewPurchaseViewModel(DialogCoordinator.Instance, purchase);
+            DataContext = VMWithItem;
 
         }
 

@@ -12,6 +12,13 @@ using System.Threading.Tasks;
 
 namespace Kait.ViewModel
 {
+
+    /*
+     * BUG Critical::
+     *           
+     *           AddedInvoiceProducts[item].Tax is null first time an exisiting purchase order is displayed
+     *           
+     */
     public class NewPurchaseViewModel : NotifyUIBase
     {
 
@@ -28,6 +35,7 @@ namespace Kait.ViewModel
             InitializeViewModelWithPurchase(purchase);
             DialogCoordinator = iDialogCoordinator;
             FreshPurchase = false;
+            PurchaseDataUpdated();
         }
         private void InitializeViewModel()
         {
@@ -71,6 +79,14 @@ namespace Kait.ViewModel
         }
         private void InitializeViewModelWithPurchase(PurchaseViewModel purchase)
         {
+            
+            if (purchase == null)
+            {
+                Console.WriteLine("WARNING :: \n purchase arg is null on NewPurchaseVM.InitializeViewModelWithPurchase()");
+                InitializeViewModel();
+                return;
+            }
+
             CurrentDate = DateTime.Today;
             MetaData = new MetaData(App.DataProvider)
             {
@@ -541,6 +557,14 @@ namespace Kait.ViewModel
                     PurchaseProductsViewModel Item = AddedPurchaseProducts.ElementAt(index);
                     // TODO : Allow App Settings for precision (currently it is App.GetConfig("RoundOffValues"),hardcoded)
                     // TODO Resolved
+
+                    if (Item.Tax == null)
+                    {
+                        Console.WriteLine("CRITITCAL :: \n Tax is null in NewPurchase.PurchaseDataUpdated()");
+                        return;
+
+                    }
+
                     Item.TotalNoTax = Item.Quantity * Item.Price;
 
                     //calculate discount from discount percentage

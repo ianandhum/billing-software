@@ -5,7 +5,7 @@
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" xmlns:mah1="http://metro.mahapps.com/winfx/xaml/shared"
     xmlns:Support="clr-namespace:Kait.Support"
     xmlns:system="clr-namespace:System;assembly=mscorlib" x:Class="Kait.App"
-             StartupUri="MainWindow.xaml" Startup="InitailizeDataContext">
+             StartupUri="MainWindow.xaml" Startup="InitailizeDataContext" DispatcherUnhandledException="Application_DispatcherUnhandledException">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

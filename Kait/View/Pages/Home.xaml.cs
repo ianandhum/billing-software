@@ -42,37 +42,19 @@ namespace Kait.View.Pages
 
         private void ShowProductsView(object sender, EventArgs e)
         {
-            MainWindow.PageHostService.Navigate(new ProductsView());
+            MainWindow.PageHostService.Navigate(new ProductsView());  
         }
 
-        private void NaigateToInvoiceAll(object sender, EventArgs e)
+        private void ShowInvoicesView(object sender, EventArgs e)
         {
-            //testing invoice preview
-            MainWindow.PageHostService.Navigate(
-                new NewInvoice(
-                    new InvoiceViewModel(
-                        App.DataProvider.Invoices.Where(
-                            x=>x.InvoiceId==140
-                        ).FirstOrDefault()
-                    )
-                 )
-            );
+            MainWindow.PageHostService.Navigate(new InvoicesView());
+        }
+
+        private void ShowPurchasesView(object sender, EventArgs e)
+        {
+            MainWindow.PageHostService.Navigate(new PurchasesView());
         }
         
-
-        private void NaigateToPurchaseOrder(object sender, EventArgs e)
-        {
-            //testing invoice preview
-            MainWindow.PageHostService.Navigate(
-                new NewPurchase(
-                    new PurchaseViewModel(
-                        App.DataProvider.Purchases.Where(
-                            x => x.PurchaseId == 24
-                        ).FirstOrDefault()
-                    )
-                 )
-            );
-        }
     }
 
 }
