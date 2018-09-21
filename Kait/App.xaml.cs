@@ -17,14 +17,13 @@ namespace Kait
     /// </summary>
     public partial class App : Application
     {
-
-
-
+        
         public static DataContext DataProvider { get; set; }
 
         public static Dictionary<string, string> Settings;
         public void InitailizeDataContext(object sender, StartupEventArgs e)
         {
+            //Log console ouput to a file
             logOutputToFile();
             Thread StartAsyncEF6Migration = new Thread(CreateContext);
             StartAsyncEF6Migration.Start();
@@ -72,13 +71,13 @@ namespace Kait
             MessageBox.Show(e.Exception.Message + "\n Application will be terminated", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
             Console.WriteLine(e.Exception.Message);
             Console.WriteLine(e.Exception.StackTrace);
-            //e.Handled = true;
-            //MainWindow.Close();
+            e.Handled = true;
+            MainWindow.Close();
 
         }
 
         // Save all console out to file
-        // Evolved from @JaniekBuysrogge's answer at SO
+        // Forked from @JaniekBuysrogge's answer at SO
 
         private void logOutputToFile()
         {

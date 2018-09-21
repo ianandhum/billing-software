@@ -54,7 +54,17 @@ namespace Kait.View.Pages
         {
             MainWindow.PageHostService.Navigate(new PurchasesView());
         }
-        
+
+        private void ShowClientsView(object sender, EventArgs e)
+        {
+            MainWindow.PageHostService.Navigate(new ClientsView());
+        }
+
+        private void ShowVendorsView(object sender, EventArgs e)
+        {
+            MainWindow.PageHostService.Navigate(new VendorsView());
+        }
+
     }
 
 }

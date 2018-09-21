@@ -75,7 +75,6 @@ namespace Kait.View.Pages
         // The following non standard code is just a temporary work around for 
         // Adding Purchase items to print view
 
-
         private void NavigateToPrintPreview(object sender, RoutedEventArgs e)
         {
             (DataContext as NewInvoiceViewModel).SaveInvoiceCmd.Execute(null);

@@ -104,10 +104,9 @@
                             </Style>
                         </DataGrid.CellStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn MinWidth="100"  FontSize="14" FontWeight="Medium" Header="Purchase Number" Binding="{Binding PurchaseId}"/>
-                            <DataGridTextColumn MinWidth="300"  FontSize="14" FontWeight="Medium" Header="Vendor Name" Binding="{Binding Vendor.Name}" />
-                            <DataGridTextColumn MinWidth="50"  FontSize="14" FontWeight="Medium" Header="Issue Date" Binding="{Binding IssueDate,StringFormat={}{0:dd MMM yyyy}}" />
-                            <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Due Date" Binding="{Binding DueDate,StringFormat={}{0:dd MMM yyyy}}"/>
+                            <DataGridTextColumn Width="100"  FontSize="14" FontWeight="Medium" Header="Purchase Number" Binding="{Binding PurchaseId}"/>
+                            <DataGridTextColumn Width="300"  FontSize="14" FontWeight="Medium" Header="Vendor Name" Binding="{Binding Vendor.Name}" />
+                            <DataGridTextColumn MinWidth="100"  FontSize="14" FontWeight="Medium" Header="Issue Date" Binding="{Binding IssueDate,StringFormat={}{0:dd MMM yyyy}}" />
                             <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Amount"  Binding="{Binding SubTotal,StringFormat='{}₹{0}'}" />
                             <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Tax" Binding="{Binding TotalTax,StringFormat='{}₹{0}'}"/>
                             <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Total" Binding="{Binding Total,StringFormat='{}₹{0}'}"/>
@@ -152,6 +151,9 @@
                     <StackPanel Grid.Row="3" Orientation="Vertical">
                         <Label HorizontalContentAlignment="Center" Background="#fff" Visibility="{Binding Path=IsPurchaseListEmpty,Converter={StaticResource BoolToVisibility}}" FontSize="15" FontWeight="Bold" Padding="0,30" Margin="0">There are no Purchases to display</Label>
                         <Controls:Underline Grid.Row="2" Grid.ColumnSpan="5" BorderThickness="1" BorderBrush="#ddd"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Orientation="Horizontal">
+                        
                     </StackPanel>
 
                 </Grid>

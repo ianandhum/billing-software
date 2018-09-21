@@ -302,9 +302,10 @@
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="7" Grid.Column="2" FontSize="15">Due date</Label>
                             <DatePicker Grid.Row="7" Grid.Column="3"  Margin="20,8" Padding="5"  Text="{Binding Path=NewInvoice.DueDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></DatePicker>
 
-                            <DockPanel  Grid.Row="8" Grid.Column="3"  >
+                            <DockPanel  Grid.Row="8" Grid.Column="3"  Grid.ColumnSpan="4">
                                 <Button MinWidth="100" DockPanel.Dock="Right"  Margin="0,30,50,30" Padding="10"  Style="{DynamicResource AccentedSquareButtonStyle}" Click="NavigateToPrintPreview" >Save and print</Button>
-                                <Button Width="100" DockPanel.Dock="Right" Margin="10,30" Padding="10" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ItemPage}">Back</Button>
+                                <Button MinWidth="100" DockPanel.Dock="Right"  Margin="0,30,10,30" Padding="10"  Style="{DynamicResource SquareButtonStyle}"  Command="{Binding Path=SaveInvoiceCmd}">Save Only</Button>
+                                <Button Width="100" DockPanel.Dock="Left" Margin="10,30,30,30" Padding="10" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ItemPage}">Back</Button>
                             </DockPanel>
                         </Grid>
                     </TabItem>

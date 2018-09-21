@@ -301,9 +301,10 @@
 
                             <Label Style="{StaticResource clientLabelStyle}" Grid.Row="7" Grid.Column="0" FontSize="15">Issue date</Label>
                             <DatePicker Grid.Row="7" Grid.Column="1"  Margin="20,8" Padding="5"  Text="{Binding Path=NewPurchase.IssueDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></DatePicker>
-                
+
                             <DockPanel  Grid.Row="8" Grid.Column="3"  >
                                 <Button MinWidth="100" DockPanel.Dock="Right"  Margin="0,30,50,30" Padding="10"  Style="{DynamicResource AccentedSquareButtonStyle}" Click="NavigateToPrintPreview" >Save and print</Button>
+                                <Button MinWidth="100" DockPanel.Dock="Right"  Margin="0,30,10,30" Padding="10"  Style="{DynamicResource SquareButtonStyle}" Command="{Binding Path=SavePurchaseCmd}" >Save Only</Button>
                                 <Button Width="100" DockPanel.Dock="Right" Margin="10,30" Padding="10" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Command="{Binding Path=NavigateToCmd}" CommandParameter="{StaticResource ItemPage}">Back</Button>
                             </DockPanel>
                         </Grid>
