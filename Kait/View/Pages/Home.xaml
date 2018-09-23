@@ -64,7 +64,8 @@
                 Grid.Row="1" 
                 Heading="Stock Information" 
                 SubHeading="Add new estimate receipt" 
-                Source="/Kait;component/View/Assets/new-purchase.png"/>
+                Source="/Kait;component/View/Assets/new-purchase.png"
+                Handler="ShowGSTReportView"/>
             <UI:HomeButton 
                 Grid.Column="0" 
                 Grid.Row="2" 

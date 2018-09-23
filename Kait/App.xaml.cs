@@ -79,7 +79,7 @@ namespace Kait
         // Save all console out to file
         // Forked from @JaniekBuysrogge's answer at SO
 
-        private void logOutputToFile()
+        public static void logOutputToFile()
         {
             FileStream logFileStream = new FileStream("logs/genLog.txt", FileMode.Append);
             var logstreamwriter = new StreamWriter(logFileStream);
@@ -88,6 +88,14 @@ namespace Kait
             logstreamwriter.AutoFlush = true;
             Console.SetOut(logstreamwriter);
             Console.SetError(errstreamwriter);
+        }
+
+        public static void disableLogOutToFile()
+        {
+            //Code From SO by @AdrianoRepetti
+            var stdOut = new StreamWriter(Console.OpenStandardOutput());
+            stdOut.AutoFlush = true;
+            Console.SetOut(stdOut);
         }
     }
 }

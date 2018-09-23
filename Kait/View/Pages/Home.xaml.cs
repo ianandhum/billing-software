@@ -64,6 +64,10 @@ namespace Kait.View.Pages
         {
             MainWindow.PageHostService.Navigate(new VendorsView());
         }
+        private void ShowGSTReportView(object sender, EventArgs e)
+        {
+            MainWindow.PageHostService.Navigate(new GSTReportView());
+        }
 
     }
 
