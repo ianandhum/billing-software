@@ -20,25 +20,28 @@ using MahApps.Metro.Controls.Dialogs;
 namespace Kait.View.Pages
 {
     /// <summary>
-    /// Interaction logic for NewInvoice.xaml
+    /// Interaction logic for NewPurchase.xaml
     /// </summary>
-    public partial class NewInvoice : Page
+    public partial class NewPurchase : Page
     {
-        private NewInvoiceViewModel VM = new NewInvoiceViewModel(DialogCoordinator.Instance);
-        
-        public NewInvoice()
+        private NewPurchaseViewModel VM = new NewPurchaseViewModel(DialogCoordinator.Instance);
+        private NewPurchaseViewModel VMWithItem;
+
+        public NewPurchase()
         {
             InitializeComponent();
             DataContext = VM;
 
         }
 
-        public NewInvoice(InvoiceViewModel invoice)
+        public NewPurchase(PurchaseViewModel purchase)
         {
+            VMWithItem = new NewPurchaseViewModel(DialogCoordinator.Instance, purchase);
             InitializeComponent();
-            DataContext = new NewInvoiceViewModel(DialogCoordinator.Instance,invoice);
+            DataContext = VMWithItem;
 
         }
+
 
         //
         //Control members
@@ -46,7 +49,7 @@ namespace Kait.View.Pages
 
         private void NavigateToTab(TabType tabType)
         {
-            InvoiceNavTab.SelectedIndex = (int)tabType;
+            PurchaseNavTab.SelectedIndex = (int)tabType;
         }
         private enum TabType
         {
@@ -75,21 +78,20 @@ namespace Kait.View.Pages
         // The following non standard code is just a temporary work around for 
         // Adding Purchase items to print view
 
+
         private void NavigateToPrintPreview(object sender, RoutedEventArgs e)
         {
-            (DataContext as NewInvoiceViewModel).SaveInvoiceCmd.Execute(null);
+            (DataContext as NewPurchaseViewModel).SavePurchaseCmd.Execute(null);
             GenerateItemRowsToPrintView();
             //temporary turn around for developing print preview
-            
-            Console.WriteLine("Column count with print preview table {0}",PrintDocumentProductTable.Columns.Count);
-            //PrintDocumentProductTable.Columns.ElementAt(1).Width = new GridLength(300);
-            PrintInvoice();
+            PrintPurchase();
         }
 
 
 
-        void GenerateItemRowsToPrintView() {
-            NewInvoiceViewModel viewModel = (NewInvoiceViewModel)DataContext;
+        void GenerateItemRowsToPrintView()
+        {
+            NewPurchaseViewModel viewModel = (NewPurchaseViewModel)DataContext;
 
             TableRowGroup ItemTableRowGroup = new TableRowGroup();
             ItemTableRowGroup.Rows.Add(BuildHeaderRow());
@@ -120,10 +122,10 @@ namespace Kait.View.Pages
             ItemTableRowGroup.Rows.Add(underlineBelow);
             */
             bool alternateColor = false;
-            foreach (InvoiceProductsViewModel item in viewModel.AddedInvoiceProducts.ToList())
+            foreach (PurchaseProductsViewModel item in viewModel.AddedPurchaseProducts.ToList())
             {
                 var itemRow = BuildItemRow(item);
-                itemRow.Background = new SolidColorBrush(alternateColor?Color.FromRgb(246,246,246):Color.FromRgb(253,253,253));
+                itemRow.Background = new SolidColorBrush(alternateColor ? Color.FromRgb(246, 246, 246) : Color.FromRgb(253, 253, 253));
                 alternateColor = !alternateColor;
                 ItemTableRowGroup.Rows.Add(itemRow);
                 TableRow underlineBelow = new TableRow();
@@ -146,7 +148,7 @@ namespace Kait.View.Pages
                       }
                   )
                   {
-                      Padding=new Thickness(0.10)
+                      Padding = new Thickness(0.10)
                   }
                 );
 
@@ -155,7 +157,7 @@ namespace Kait.View.Pages
 
             }
 
-            for (int i = 0; i < 12 - viewModel.AddedInvoiceProducts.Count; i++)
+            for (int i = 0; i < 12 - viewModel.AddedPurchaseProducts.Count; i++)
             {
                 ItemTableRowGroup.Rows.Add(CreateEmptyRow());
             }
@@ -171,13 +173,13 @@ namespace Kait.View.Pages
             totalText.Padding = new Thickness(10);
 
             footerRow.Cells.Add(totalText);
-            footerRow.Cells.Add(CreateTableCellWithText("",ApplyFooterCellStyle));
             footerRow.Cells.Add(CreateTableCellWithText("", ApplyFooterCellStyle));
             footerRow.Cells.Add(CreateTableCellWithText("", ApplyFooterCellStyle));
             footerRow.Cells.Add(CreateTableCellWithText("", ApplyFooterCellStyle));
-            footerRow.Cells.Add(CreateTableCellWithText((viewModel.NewInvoice.TotalTax / 2).ToString(), ApplyFooterCellStyle,true));
-            footerRow.Cells.Add(CreateTableCellWithText((viewModel.NewInvoice.TotalTax / 2).ToString(), ApplyFooterCellStyle,true));
-            footerRow.Cells.Add(CreateTableCellWithText(viewModel.NewInvoice.Total.ToString(), ApplyFooterCellStyle,true));
+            footerRow.Cells.Add(CreateTableCellWithText("", ApplyFooterCellStyle));
+            footerRow.Cells.Add(CreateTableCellWithText((viewModel.NewPurchase.TotalTax / 2).ToString(), ApplyFooterCellStyle, true));
+            footerRow.Cells.Add(CreateTableCellWithText((viewModel.NewPurchase.TotalTax / 2).ToString(), ApplyFooterCellStyle, true));
+            footerRow.Cells.Add(CreateTableCellWithText(viewModel.NewPurchase.Total.ToString(), ApplyFooterCellStyle, true));
             ItemTableRowGroup.Rows.Add(footerRow);
             PrintDocumentProductTable.RowGroups.Clear();
             PrintDocumentProductTable.RowGroups.Add(ItemTableRowGroup);
@@ -200,7 +202,7 @@ namespace Kait.View.Pages
         {
 
             tableCell.TextAlignment = System.Windows.TextAlignment.Center;
-            tableCell.Padding = new Thickness(0,10,0,10);
+            tableCell.Padding = new Thickness(0, 10, 0, 10);
             tableCell.Foreground = new SolidColorBrush(Color.FromRgb(50, 50, 50));
             tableCell.FontWeight = FontWeights.Normal;
             tableCell.FontSize = 14;
@@ -217,7 +219,7 @@ namespace Kait.View.Pages
         TableRow BuildHeaderRow()
         {
             TableRow headerRow = new TableRow();
-            headerRow.Cells.Add(CreateTableCellWithText("SL NO",ApplyHeaderStyle));
+            headerRow.Cells.Add(CreateTableCellWithText("NO", ApplyHeaderStyle));
             headerRow.Cells.Add(CreateTableCellWithText("PRODUCT", ApplyHeaderStyle));
             headerRow.Cells.Add(CreateTableCellWithText("HSN", ApplyHeaderStyle));
             headerRow.Cells.Add(CreateTableCellWithText("QTY", ApplyHeaderStyle));
@@ -230,7 +232,7 @@ namespace Kait.View.Pages
             return headerRow;
         }
 
-        TableRow BuildItemRow(InvoiceProductsViewModel item)
+        TableRow BuildItemRow(PurchaseProductsViewModel item)
         {
             TableRow itemRow = new TableRow();
 
@@ -239,14 +241,14 @@ namespace Kait.View.Pages
             itemRow.Cells.Add(CreateTableCellWithText(item.HSN, ApplyItemCellStyle));
             itemRow.Cells.Add(CreateTableCellWithText(item.Quantity.ToString(), ApplyItemCellStyle));
             itemRow.Cells.Add(CreateTableCellWithText(item.Price.ToString(), ApplyItemCellStyle, true));
-            itemRow.Cells.Add(CreateTableCellWithText(item.Tax.Rate.ToString() + "%", ApplyItemCellStyle,false));
-            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax/2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle,true));
-            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle,true));
-            itemRow.Cells.Add(CreateTableCellWithText(item.Total.ToString(), ApplyItemCellStyle,true));
+            itemRow.Cells.Add(CreateTableCellWithText(item.Tax.Rate.ToString() + "%", ApplyItemCellStyle, false));
+            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle, true));
+            itemRow.Cells.Add(CreateTableCellWithText(Decimal.Round(item.TotalTax / 2, Convert.ToInt16(App.GetConfig("RoundOffValues"))).ToString(), ApplyItemCellStyle, true));
+            itemRow.Cells.Add(CreateTableCellWithText(item.Total.ToString(), ApplyItemCellStyle, true));
             return itemRow;
 
         }
-        
+
         TableRow CreateEmptyRow()
         {
             TableRow tableRow = new TableRow();
@@ -254,17 +256,18 @@ namespace Kait.View.Pages
             {
                 tableRow.Cells.Add(CreateTableCellWithText("", ApplyItemCellStyle));
             }
-            return tableRow; 
+            return tableRow;
         }
-        
-        TableCell CreateTableCellWithText(String text, Action<TableCell> ApplyStyles=null , bool IsCurrency=false) {
+
+        TableCell CreateTableCellWithText(String text, Action<TableCell> ApplyStyles = null, bool IsCurrency = false)
+        {
             TableCell tableCell = new TableCell();
 
 
             TextBlock textBlock = new TextBlock
             {
-                Text = (IsCurrency? "₹" : "")+text,
-                TextWrapping=TextWrapping.Wrap
+                Text = (IsCurrency ? "₹" : "") + text,
+                TextWrapping = TextWrapping.Wrap
             };
 
             Block cellBlock = new BlockUIContainer(textBlock);
@@ -273,14 +276,14 @@ namespace Kait.View.Pages
             return tableCell;
         }
 
-        private void PrintInvoice()
+        private void PrintPurchase()
         {
             PrintDialog printDialog = new PrintDialog();
             IDocumentPaginatorSource source = documentReader.Document;
             DocumentPaginator paginator = source.DocumentPaginator;
             if (printDialog.ShowDialog() == true)
             {
-                printDialog.PrintDocument(paginator, "Printing Invoice");
+                printDialog.PrintDocument(paginator, "Printing Purchase");
             }
         }
     }

@@ -1,0 +1,295 @@
+﻿<Page x:Class="Kait.View.Pages.ClientsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Kait.View.Pages"
+      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+      xmlns:SimpleChildWindow="clr-namespace:MahApps.Metro.SimpleChildWindow;assembly=MahApps.Metro.SimpleChildWindow"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ClientsView">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <DockPanel    Grid.Column="0" Grid.Row="0"  Background="#eee">
+            <Controls:Tile  Width="60" Margin="0" Height="60" Background="#eaeaea" Cursor="Hand" BorderThickness="0,0,0,0">
+                <Image Source="/Kait;component/View/Assets/026-back.png" Height="15" Width="15"/>
+            </Controls:Tile>
+            <Label VerticalAlignment="Stretch"  Width="200" HorizontalAlignment="Left" VerticalContentAlignment="Center" FontSize="16" FontWeight="Bold" FontFamily="sans-serif" Content="Client information"/>
+            <StackPanel Width="317" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="15,0">
+                <Label VerticalAlignment="Stretch"    HorizontalContentAlignment="Right" FontSize="12"  FontFamily="sans-serif" Content="Kait Electricals"/>
+                <Label VerticalAlignment="Stretch"     HorizontalContentAlignment="Right" FontSize="10"  FontFamily="sans-serif" Content="{Binding CurrentDate,StringFormat='{}{0:MMM dd yyyy}'}"/>
+
+            </StackPanel>
+        </DockPanel>
+        <ScrollViewer Grid.Row="1" Grid.Column="0"  Background="#fafafa"  VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid VerticalAlignment="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition MinHeight="80"/>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition MinHeight="100"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label Padding="0,20" Grid.Row="0" Grid.ColumnSpan="6" HorizontalContentAlignment="Center" FontSize="24">Filter Clients</Label>
+                        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Margin="8,20">
+                            <Label Height="28" Foreground="#000" FontWeight="Medium"  Content="Search For" TabIndex="-1"/>
+                            <TextBox Padding="5"  FontWeight="SemiBold" HorizontalContentAlignment="Left" Text="{Binding Path=SearchKey,Mode=TwoWay}" KeyUp="SearchKey_Hit">
+                            </TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Margin="8,20">
+                            <Label  Height="28" Foreground="#000"  FontWeight="Medium" Content="Search By"/>
+                            <ComboBox Padding="8" FontWeight="SemiBold" ItemsSource="{Binding Path=Filters}" SelectedItem="{Binding Path=SearchFilter,Mode=TwoWay}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="3" Margin="8,20">
+                            <TextBlock Height="27"/>
+                            <Button  Padding="9" HorizontalAlignment="Stretch"  Style="{DynamicResource SquareButtonStyle}" Content="Search" Command="{Binding Path=SearchCmd}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="5" Margin="8,20">
+                            <TextBlock Height="27"/>
+                            <Button Padding="9" HorizontalAlignment="Right"  Style="{DynamicResource AccentedSquareButtonStyle}" Content="add new Client" Command="{Binding Path=AddClientCmd}" CommandParameter="{StaticResource False}"/>
+                        </StackPanel>
+
+                    </Grid>
+                    <Controls:Underline Grid.Row="1" Grid.ColumnSpan="5" BorderThickness="1" BorderBrush="#ddd"/>
+
+                    <DataGrid 
+                    Grid.Row="2"  
+                    ColumnWidth="*"  
+                    IsReadOnly="True"  
+                    HorizontalContentAlignment="Center" 
+                    AlternatingRowBackground="#fafafa" 
+                    RowBackground="#fff"  
+                    AutoGenerateColumns="False"  
+                    ItemsSource="{ Binding Path=ClientsList,Mode=OneWay,NotifyOnSourceUpdated=True}" 
+                    SelectedItem="{Binding Path=SelectedClientItem,Mode=TwoWay}"  
+                    CanUserAddRows="False" 
+                    CanUserDeleteRows="False" 
+                    CanUserResizeRows="False" 
+                    CanUserSortColumns="False" 
+                    CanUserReorderColumns="False">
+
+                        <DataGrid.CellStyle>
+                            <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource MetroDataGridCell}">
+                                <Setter Property="Foreground" Value="#000"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Foreground" Value="#000"></Setter>
+                                        <Setter Property="Background" Value="#fffccc"></Setter>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn MinWidth="100"  FontSize="14" FontWeight="Medium" Header="Name" Binding="{Binding Name}"/>
+                            <DataGridTextColumn MinWidth="300"  FontSize="14" FontWeight="Medium" Header="Billing Address" Binding="{Binding BillingAddress}" />
+                            <DataGridTextColumn MinWidth="50"  FontSize="14" FontWeight="Medium" Header="Billing City" Binding="{Binding BillingCity}" />
+                            <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Billing PIN" Binding="{Binding BillingZIP}"/>
+                            <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Phone"  Binding="{Binding Telephone}" />
+                            <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Email Address" Binding="{Binding Email}"/>
+                            <DataGridTextColumn MaxWidth="150" FontSize="14" FontWeight="Medium" Header="Details" Binding="{Binding Details}"/>
+                            <DataGridTemplateColumn MaxWidth="180" Header="Action" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Margin="5" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.EditClientCmd}"  CommandParameter="{StaticResource True}" Style="{DynamicResource ResourceKey=MetroCircleButtonStyle}" Height="40" Width="40">
+                                                <Rectangle Width="12" Height="12" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_edit}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </Button>
+                                            <Button Margin="5" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.EditClientCmd}"  CommandParameter="{StaticResource False}" Style="{DynamicResource ResourceKey=MetroCircleButtonStyle}"  Height="40" Width="40">
+                                                <Rectangle Width="15" Height="10" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_eye}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </Button>
+                                            <!--Remove selected item from Clients-->
+                                            <Button Margin="5"  Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.RmClientCmd}"  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.SelectedClientItem}" Style="{DynamicResource ResourceKey=MetroCircleButtonStyle}" Height="40" Width="40">
+                                                <Rectangle Width="10" Height="14" Fill="{Binding Foreground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </Button>
+                                        </StackPanel>
+
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+
+                    </DataGrid>
+                    <StackPanel Grid.Row="3" Orientation="Vertical">
+                        <Label HorizontalContentAlignment="Center" Background="#fff" Visibility="{Binding Path=IsClientListEmpty,Converter={StaticResource BoolToVisibility}}" FontSize="15" FontWeight="Bold" Padding="0,30" Margin="0">There are no Clients to display</Label>
+                        <Controls:Underline Grid.Row="2" Grid.ColumnSpan="5" BorderThickness="1" BorderBrush="#ddd"/>
+                    </StackPanel>
+
+                </Grid>
+                <SimpleChildWindow:ChildWindow
+                               Title="Client Information"
+                               Padding="15"
+                               ChildWindowWidth="800"
+                               AllowMove="True"
+                               ShowCloseButton="True"
+                               IsOpen="{Binding Path=IsEditClientItemOpen,Mode=TwoWay}"
+                               >
+
+                    <SimpleChildWindow:ChildWindow.OverlayBrush>
+                        <SolidColorBrush Opacity="0.7" Color="Black" />
+
+                    </SimpleChildWindow:ChildWindow.OverlayBrush>
+
+                    <StackPanel Margin="20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="8*"/>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="8*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Left Portion -->
+                            <Label Grid.Row="0" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Name</Label>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="10" Text="{Binding Path=SelectedClientItem.Name,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="1" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Billing Address</Label>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="10" AcceptsReturn="True" Height="100" Text="{Binding Path=SelectedClientItem.BillingAddress,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="2" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Billing City</Label>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="10" Text="{Binding Path=SelectedClientItem.BillingCity,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="3" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Billing PinCode</Label>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="10" Text="{Binding Path=SelectedClientItem.BillingZIP,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="4" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Phone Number</Label>
+                            <TextBox Grid.Row="4" Grid.Column="1" Margin="10" Text="{Binding Path=SelectedClientItem.Telephone,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+                            
+                            <!--Right Portion-->
+                            <Label Grid.Row="0" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">GSTIN</Label>
+                            <TextBox Grid.Row="0" Grid.Column="3" Margin="10" Text="{Binding Path=SelectedClientItem.GSTIN,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="1" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Shipping Address</Label>
+                            <TextBox Grid.Row="1" Grid.Column="3" Margin="10" AcceptsReturn="True" Height="100" Text="{Binding Path=SelectedClientItem.ShippingAddress,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="2" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Shipping City</Label>
+                            <TextBox Grid.Row="2" Grid.Column="3" Margin="10" Text="{Binding Path=SelectedClientItem.ShippingCity,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="3" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">ShippingPinCode</Label>
+                            <TextBox Grid.Row="3" Grid.Column="3" Margin="10" Text="{Binding Path=SelectedClientItem.ShippingZIP,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Label Grid.Row="4" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Email</Label>
+                            <TextBox Grid.Row="4" Grid.Column="3" Margin="10" Text="{Binding Path=SelectedClientItem.Email,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+                            
+                            <Label Grid.Row="5" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Details</Label>
+                            <TextBox Grid.Row="5" Grid.Column="3" Margin="10" Text="{Binding Path=SelectedClientItem.Details,Mode=TwoWay}" IsEnabled="{Binding Path=EditMode}"></TextBox>
+
+                            <Button Grid.Row="7" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=SaveEditsClientCmd}" Content="{Binding PrimaryElementContent}"></Button>
+                        </Grid>
+                    </StackPanel>
+                </SimpleChildWindow:ChildWindow>
+                <SimpleChildWindow:ChildWindow
+                               Title="New Client"
+                               Padding="15"
+                               ChildWindowWidth="800"
+                               ShowCloseButton="True"
+                               IsOpen="{Binding Path=IsNewClientItemOpen,Mode=TwoWay}"
+                               >
+                    <SimpleChildWindow:ChildWindow.OverlayBrush>
+                        <SolidColorBrush Opacity="0.7" Color="Black" />
+                    </SimpleChildWindow:ChildWindow.OverlayBrush>
+                    <StackPanel Margin="20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="8*"/>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="8*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <!-- Left Portion -->
+                            <Label Grid.Row="0" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Name</Label>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="10" Text="{Binding Path=NewClientItem.Name,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="1" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Billing Address</Label>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="10" AcceptsReturn="True" Height="100" Text="{Binding Path=NewClientItem.BillingAddress,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="2" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Billing City</Label>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="10" Text="{Binding Path=NewClientItem.BillingCity,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="3" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Billing PinCode</Label>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="10" Text="{Binding Path=NewClientItem.BillingZIP,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="4" Grid.Column="0" Margin="10" Style="{StaticResource clientLabelStyle}">Phone Number</Label>
+                            <TextBox Grid.Row="4" Grid.Column="1" Margin="10" Text="{Binding Path=NewClientItem.Telephone,Mode=TwoWay}"></TextBox>
+
+                            <!--Right Portion-->
+                            <Label Grid.Row="0" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">GSTIN</Label>
+                            <TextBox Grid.Row="0" Grid.Column="3" Margin="10" Text="{Binding Path=NewClientItem.GSTIN,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="1" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Shipping Address</Label>
+                            <TextBox Grid.Row="1" Grid.Column="3" Margin="10" AcceptsReturn="True" Height="100" Text="{Binding Path=NewClientItem.ShippingAddress,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="2" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Shipping City</Label>
+                            <TextBox Grid.Row="2" Grid.Column="3" Margin="10" Text="{Binding Path=NewClientItem.ShippingCity,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="3" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">ShippingPinCode</Label>
+                            <TextBox Grid.Row="3" Grid.Column="3" Margin="10" Text="{Binding Path=NewClientItem.ShippingZIP,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="4" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Email</Label>
+                            <TextBox Grid.Row="4" Grid.Column="3" Margin="10" Text="{Binding Path=NewClientItem.Email,Mode=TwoWay}"></TextBox>
+
+                            <Label Grid.Row="5" Grid.Column="2" Margin="10" Style="{StaticResource clientLabelStyle}">Details</Label>
+                            <TextBox Grid.Row="5" Grid.Column="3" Margin="10" Text="{Binding Path=NewClientItem.Details,Mode=TwoWay}"></TextBox>
+
+                            <Button Grid.Row="7" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="100" Margin="10" Style="{DynamicResource AccentedSquareButtonStyle}" Command="{Binding Path=AddClientCmd}"  CommandParameter="{StaticResource True}" Content="Add Client"></Button>
+
+                        </Grid>
+                    </StackPanel>
+                </SimpleChildWindow:ChildWindow>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

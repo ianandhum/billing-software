@@ -4,15 +4,15 @@ using Kait.Support;
 
 namespace Kait.ViewModel.Primitive
 {
-    public class InvoiceProductsViewModel:NotifyUIBase
+    public class PurchaseProductsViewModel:NotifyUIBase
     {
-        public InvoiceProductsViewModel()
+        public PurchaseProductsViewModel()
         {
-            InvoiceProducts = new InvoiceProducts();
+            PurchaseProducts = new PurchaseProducts();
         }
-        public InvoiceProductsViewModel(InvoiceProducts invoiceProducts)
+        public PurchaseProductsViewModel(PurchaseProducts purchaseProducts)
         {
-            InvoiceProducts = invoiceProducts;
+            PurchaseProducts = purchaseProducts;
         }
         private int _SlNo { get; set; }
         public int SlNo
@@ -34,11 +34,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.ProductId;
+                return PurchaseProducts.ProductId;
             }
             set
             {
-                InvoiceProducts.ProductId = value;
+                PurchaseProducts.ProductId = value;
                 RaisePropertyChanged("ProductId");
             }
         }
@@ -47,11 +47,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.Name;
+                return PurchaseProducts.Name;
             }
             set
             {
-                InvoiceProducts.Name = value;
+                PurchaseProducts.Name = value;
                 RaisePropertyChanged("Name");
             }
         }
@@ -60,11 +60,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.Description;
+                return PurchaseProducts.Description;
             }
             set
             {
-                InvoiceProducts.Description = value;
+                PurchaseProducts.Description = value;
                 RaisePropertyChanged("Description");
             }
         }
@@ -72,11 +72,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.MU;
+                return PurchaseProducts.MU;
             }
             set
             {
-                InvoiceProducts.MU = value;
+                PurchaseProducts.MU = value;
                 RaisePropertyChanged("MU");
             }
         }
@@ -84,11 +84,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.Price;
+                return PurchaseProducts.Price;
             }
             set
             {
-                InvoiceProducts.Price = value;
+                PurchaseProducts.Price = value;
                 RaisePropertyChanged("Price");
             }
         }
@@ -97,11 +97,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.Quantity;
+                return PurchaseProducts.Quantity;
             }
             set
             {
-                InvoiceProducts.Quantity = value;
+                PurchaseProducts.Quantity = value;
                 RaisePropertyChanged("Quantity");
             }
         }
@@ -109,11 +109,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.InclusiveTax;
+                return PurchaseProducts.InclusiveTax;
             }
             set
             {
-                InvoiceProducts.InclusiveTax = value;
+                PurchaseProducts.InclusiveTax = value;
                 RaisePropertyChanged("InclusiveTax");
             }
         }
@@ -122,11 +122,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.TotalNoTax;
+                return PurchaseProducts.TotalNoTax;
             }
             set
             {
-                InvoiceProducts.TotalNoTax = value;
+                PurchaseProducts.TotalNoTax = value;
                 RaisePropertyChanged("TotalNoTax");
             }
         }
@@ -134,11 +134,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.TotalTax;
+                return PurchaseProducts.TotalTax;
             }
             set
             {
-                InvoiceProducts.TotalTax = value;
+                PurchaseProducts.TotalTax = value;
                 RaisePropertyChanged("TotalTax");
             }
         }
@@ -146,11 +146,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.Total;
+                return PurchaseProducts.Total;
             }
             set
             {
-                InvoiceProducts.Total = value;
+                PurchaseProducts.Total = value;
                 RaisePropertyChanged("Total");
             }
         }
@@ -158,11 +158,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.IsDiscount;
+                return PurchaseProducts.IsDiscount;
             }
             set
             {
-                InvoiceProducts.IsDiscount = value;
+                PurchaseProducts.IsDiscount = value;
                 RaisePropertyChanged("IsDiscount");
             }
         }
@@ -170,11 +170,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.DiscountPercent;
+                return PurchaseProducts.DiscountPercent;
             }
             set
             {
-                InvoiceProducts.DiscountPercent = value;
+                PurchaseProducts.DiscountPercent = value;
                 RaisePropertyChanged("DiscountPercent");
             }
         }
@@ -182,11 +182,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.HSN;
+                return PurchaseProducts.HSN;
             }
             set
             {
-                InvoiceProducts.HSN = value;
+                PurchaseProducts.HSN = value;
                 RaisePropertyChanged("HSN");
             }
         }
@@ -194,11 +194,11 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.CESSPercent;
+                return PurchaseProducts.CESSPercent;
             }
             set
             {
-                InvoiceProducts.CESSPercent = value;
+                PurchaseProducts.CESSPercent = value;
                 RaisePropertyChanged("CESSPercent");
             }
 
@@ -207,20 +207,20 @@ namespace Kait.ViewModel.Primitive
         {
             get
             {
-                return InvoiceProducts.Tax;
+                return PurchaseProducts.Tax;
             }
             set
             {
-                InvoiceProducts.Tax = value;
+                PurchaseProducts.Tax = value;
                 RaisePropertyChanged("Tax");
             }
 
         }
-        private InvoiceProducts InvoiceProducts { get; set; }
+        private PurchaseProducts PurchaseProducts { get; set; }
 
-        public InvoiceProducts GetInvoiceProducts()
+        public PurchaseProducts GetPurchaseProducts()
         {
-            return InvoiceProducts;
+            return PurchaseProducts;
         }
     }
 }

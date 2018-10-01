@@ -18,28 +18,122 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0"  Grid.Row="0">
-        <Grid.ColumnDefinitions >
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="150"/>
-            <RowDefinition Height="220"/>
-            <RowDefinition Height="220"/>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
-            <Label Content="Kait Electricals" FontWeight="Light" FontFamily="Sans-serif" FontSize="40" Margin="30"></Label>
-        </StackPanel>
-        <UI:HomeButton Grid.Column="0" Grid.Row="1" Heading="New Invoice" SubHeading="Create new invoice" Source="/Kait;component/View/Assets/new-invoice.png" Handler="HomeButton_Handler"></UI:HomeButton>
-        <UI:HomeButton Grid.Column="1" Grid.Row="1" Heading="Add Purchase" SubHeading="Purchase Stock from vendor" Source="/Kait;component/View/Assets/new-purchase.png"></UI:HomeButton>
-        <UI:HomeButton  Grid.Column="2" Grid.Row="1" Heading="New Receipt" SubHeading="Add new estimate receipt" Source="/Kait;component/View/Assets/receipt.png"></UI:HomeButton>
-        <UI:HomeButton Grid.Column="0" Grid.Row="2" Heading="Accounts" SubHeading="Manage client/vendors" Source="/Kait;component/View/Assets/accounts.png"></UI:HomeButton>
-        <UI:HomeButton Grid.Column="1" Grid.Row="2" Heading="Products" SubHeading="Manage Products/items" Source="/Kait;component/View/Assets/product.png"></UI:HomeButton>
-        <UI:HomeButton  Grid.Column="2" Grid.Row="2" Heading="GST Returns" SubHeading="Generate reports" Source="/Kait;component/View/Assets/returns-gst.png"></UI:HomeButton>
-
-    </Grid>
-       
-
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="80"/>
+                <RowDefinition MinHeight="200"/>
+                <RowDefinition MinHeight="200"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="5" HorizontalAlignment="Center" Margin="20">
+                <Label 
+                    Content="Kait Electrical" 
+                    FontWeight="Medium" 
+                    FontFamily="Sans-serif" 
+                    FontSize="30" 
+                    HorizontalAlignment="Center"/>
+                <Label 
+                    Content="Quick access view" 
+                    FontWeight="Medium" 
+                    FontFamily="Sans-serif" 
+                    FontSize="14" 
+                    HorizontalAlignment="Center" 
+                    Margin="0"/>
+            </StackPanel>
+            <UI:HomeButton 
+                Grid.Column="0" 
+                Grid.Row="1" 
+                Heading="New Invoice" 
+                SubHeading="Create new invoice" 
+                Source="/Kait;component/View/Assets/new-invoice.png" 
+                Handler="NewInvoiceTrigger"/>
+            <UI:HomeButton 
+                Grid.Column="1" 
+                Grid.Row="1" 
+                Heading="New Purchase Order" 
+                SubHeading="Purchase Stock from vendor" 
+                Source="/Kait;component/View/Assets/receipt.png" 
+                Handler="NewPurchaseTrigger"/>
+            <UI:HomeButton 
+                Grid.Column="2" 
+                Grid.Row="1" 
+                Heading="Stock Information" 
+                SubHeading="Add new estimate receipt" 
+                Source="/Kait;component/View/Assets/new-purchase.png"
+                Handler="ShowGSTReportView"/>
+            <UI:HomeButton 
+                Grid.Column="0" 
+                Grid.Row="2" 
+                Heading="Accounts" 
+                SubHeading="Manage client/vendors" 
+                Source="/Kait;component/View/Assets/accounts.png" 
+                Handler="ShowClientsView"/>
+            <UI:HomeButton 
+                Grid.Column="1" 
+                Grid.Row="2" 
+                Heading="Products" 
+                SubHeading="Manage Products/items" 
+                Source="/Kait;component/View/Assets/product.png" 
+                Handler="ShowProductsView"/>
+            <UI:HomeButton 
+                Grid.Column="2" 
+                Grid.Row="2" 
+                Heading="GST Returns" 
+                SubHeading="Generate reports" 
+                Source="/Kait;component/View/Assets/returns-gst.png"  
+                Handler="ShowPurchasesView"/>
+            <UI:HomeButton 
+                Grid.Column="3" 
+                Grid.Row="1" 
+                Heading="Payment/Cash Receipt" 
+                SubHeading="Manage Products/items" 
+                Source="/Kait;component/View/Assets/product.png" 
+                Handler="ShowVendorsView"/>
+            <UI:HomeButton  
+                Grid.Column="3" 
+                Grid.Row="2" 
+                Heading="Help" 
+                SubHeading="Generate reports" 
+                Source="/Kait;component/View/Assets/returns-gst.png" 
+                Handler="ShowInvoicesView" />
+            <StackPanel 
+                Grid.Column="4" 
+                Grid.Row="1" 
+                Margin="10" 
+                Grid.RowSpan="3" 
+                Background="#f8f8f8"  
+                Orientation="Vertical" 
+                MinWidth="220">
+                <Label 
+                    FontSize="30" 
+                    HorizontalContentAlignment="Center" 
+                    Padding="0,30" 
+                    FontWeight="Medium">
+                    THIS WEEK
+                </Label>
+                <StackPanel Orientation="Vertical">
+                    <Label 
+                        FontSize="50" 
+                        HorizontalContentAlignment="Center">
+                        24
+                    </Label>
+                    <Label
+                        FontSize="15" 
+                        HorizontalContentAlignment="Center">
+                        New Invoices
+                    </Label>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="0,20">
+                    <Label FontSize="40" HorizontalContentAlignment="Center">₹180000</Label>
+                    <Label FontSize="15" HorizontalContentAlignment="Center">On Sales</Label>
+                </StackPanel>
+                <Label HorizontalAlignment="Center" Padding="0,20,0,0" FontSize="15" Cursor="Hand" Content="Show More Statistics" BorderThickness="0,0,0,1" BorderBrush="DarkBlue" Foreground="DarkBlue"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>
